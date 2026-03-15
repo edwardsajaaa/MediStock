@@ -50,11 +50,11 @@ MediStock adalah aplikasi web profesional untuk digitalisasi dan otomasi manajem
 
 | Logo | Teknologi |
 |------|-----------|
-| ![Vite](https://vitejs.dev/logo.svg) | Vite |
-| ![React](https://raw.githubusercontent.com/reactjs/reactjs.org/main/src/icons/logo.svg) | React |
-| ![Golang](https://golang.org/lib/godoc/images/go-logo-blue.svg) | Golang |
-| ![Supabase](https://raw.githubusercontent.com/supabase/supabase/master/web/public/images/supabase-logo.svg) | Supabase |
-| ![PostgreSQL](https://www.postgresql.org/media/img/about/press/elephant.png) | PostgreSQL |
+| <img src="https://vitejs.dev/logo.svg" width="24"/> | Vite |
+| <img src="https://raw.githubusercontent.com/reactjs/reactjs.org/main/src/icons/logo.svg" width="24"/> | React |
+| <img src="https://golang.org/lib/godoc/images/go-logo-blue.svg" width="24"/> | Golang |
+| <img src="https://raw.githubusercontent.com/supabase/supabase/master/web/public/images/supabase-logo.svg" width="24"/> | Supabase |
+| <img src="https://www.postgresql.org/media/img/about/press/elephant.png" width="24"/> | PostgreSQL |
 
 - **Frontend:** Vite + React
 - **Backend:** Golang (Gin/Fiber)
