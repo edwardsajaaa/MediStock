@@ -2,13 +2,17 @@
 
 
 
+
 # MediStock: Sistem Manajemen Farmasi & Inventaris Obat
 
+<!-- Tech Stack Badges -->
+![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white&style=for-the-badge)
+![React](https://img.shields.io/badge/React-61DAFB?logo=react&logoColor=white&style=for-the-badge)
+![Golang](https://img.shields.io/badge/Golang-00ADD8?logo=go&logoColor=white&style=for-the-badge)
+![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?logo=supabase&logoColor=white&style=for-the-badge)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-336791?logo=postgresql&logoColor=white&style=for-the-badge)
 
-<p align="center">
-	<img src="https://vitejs.dev/logo.svg" alt="Vite Logo" width="40"/>
-	<img src="https://golang.org/lib/godoc/images/go-logo-blue.svg" alt="Golang Logo" width="40"/>
-</p>
+
 
 ---
 
