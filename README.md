@@ -1,6 +1,12 @@
 
 
+
 # MediStock: Sistem Manajemen Farmasi & Inventaris Obat
+
+<div align="center">
+	<img src="https://vitejs.dev/logo.svg" alt="Vite" width="80"/>
+	<img src="https://golang.org/lib/godoc/images/go-logo-blue.svg" alt="Golang" width="80"/>
+</div>
 
 ---
 
@@ -40,13 +46,13 @@ MediStock adalah aplikasi web profesional untuk digitalisasi dan otomasi manajem
 
 ## Tech Stack
 
-<p align="left">
-  <img src="https://vitejs.dev/logo.svg" alt="Vite" width="60"/>
-  <img src="https://raw.githubusercontent.com/reactjs/reactjs.org/main/src/icons/logo.svg" alt="React" width="60"/>
-  <img src="https://golang.org/lib/godoc/images/go-logo-blue.svg" alt="Golang" width="60"/>
-  <img src="https://raw.githubusercontent.com/supabase/supabase/master/web/public/images/supabase-logo.svg" alt="Supabase" width="60"/>
-  <img src="https://www.postgresql.org/media/img/about/press/elephant.png" alt="PostgreSQL" width="60"/>
-</p>
+| Logo | Teknologi |
+|------|-----------|
+| ![Vite](https://vitejs.dev/logo.svg) | Vite |
+| ![React](https://raw.githubusercontent.com/reactjs/reactjs.org/main/src/icons/logo.svg) | React |
+| ![Golang](https://golang.org/lib/godoc/images/go-logo-blue.svg) | Golang |
+| ![Supabase](https://raw.githubusercontent.com/supabase/supabase/master/web/public/images/supabase-logo.svg) | Supabase |
+| ![PostgreSQL](https://www.postgresql.org/media/img/about/press/elephant.png) | PostgreSQL |
 
 - Frontend: Vite + React
 - Backend: Golang (Gin/Fiber)
@@ -68,20 +74,20 @@ MediStock adalah aplikasi web profesional untuk digitalisasi dan otomasi manajem
 1. Masuk ke folder `backend`
 2. Inisialisasi Go module: `go mod init medistock`
 3. Install Gin/Fiber:
-	- Gin: `go get github.com/gin-gonic/gin`
-	- Fiber: `go get github.com/gofiber/fiber/v2`
+	 - Gin: `go get github.com/gin-gonic/gin`
+	 - Fiber: `go get github.com/gofiber/fiber/v2`
 4. Setup koneksi ke Supabase PostgreSQL:
-	- Dapatkan URL, user, password, dan database dari dashboard Supabase
-	- Gunakan ORM seperti GORM untuk query
-	- Contoh koneksi:
-	  ```go
-	  import (
-			"gorm.io/driver/postgres"
-			"gorm.io/gorm"
-	  )
-	  dsn := "host=... user=... password=... dbname=... port=... sslmode=disable"
-	  db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-	  ```
+	 - Dapatkan URL, user, password, dan database dari dashboard Supabase
+	 - Gunakan ORM seperti GORM untuk query
+	 - Contoh koneksi:
+		 ```go
+		 import (
+				 "gorm.io/driver/postgres"
+				 "gorm.io/gorm"
+		 )
+		 dsn := "host=... user=... password=... dbname=... port=... sslmode=disable"
+		 db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+		 ```
 
 ### Database
 - Gunakan Supabase sebagai server PostgreSQL
