@@ -4,8 +4,11 @@
 
 # MediStock: Sistem Manajemen Farmasi & Inventaris Obat
 
-![Vite Logo](https://vitejs.dev/logo.svg#center)
-![Golang Logo](https://golang.org/lib/godoc/images/go-logo-blue.svg#center)
+
+<p align="center">
+	<img src="https://vitejs.dev/logo.svg" alt="Vite Logo" width="40"/>
+	<img src="https://golang.org/lib/godoc/images/go-logo-blue.svg" alt="Golang Logo" width="40"/>
+</p>
 
 ---
 
