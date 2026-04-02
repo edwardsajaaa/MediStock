@@ -1,0 +1,97 @@
+package controllers
+
+import (
+	"medistock/config"
+	"medistock/models"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+)
+
+func GetItems(c *gin.Context) {
+	var items []models.Item
+	
+	// Preload batches untuk menghitung stok total per item secara gampang (walau bisa di query spesifik)
+	if err := config.DB.Preload("Batches").Find(&items).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal mengambil data"})
+		return
+	}
+
+	// Format response to include total stock calculated from active batches
+	type ItemResponse struct {
+		models.Item
+		TotalStock int `json:"total_stock"`
+	}
+
+	var response []ItemResponse
+	for _, item := range items {
+		total := 0
+		for _, batch := range item.Batches {
+			total += batch.CurrentQty
+		}
+		
+		res := ItemResponse{Item: item, TotalStock: total}
+		res.Batches = nil // Sembunyikan per-batch list kalau ga butuh ditarik semua di list utama
+		response = append(response, res)
+	}
+
+	c.JSON(http.StatusOK, response)
+}
+
+func GetItemByID(c *gin.Context) {
+	id := c.Param("id")
+	var item models.Item
+
+	if err := config.DB.Preload("Batches").First(&item, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Item tidak ditemukan"})
+		return
+	}
+
+	c.JSON(http.StatusOK, item)
+}
+
+func CreateItem(c *gin.Context) {
+	var item models.Item
+	if err := c.ShouldBindJSON(&item); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := config.DB.Create(&item).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal menyimpan item"})
+		return
+	}
+
+	c.JSON(http.StatusCreated, item)
+}
+
+func UpdateItem(c *gin.Context) {
+	id := c.Param("id")
+	var item models.Item
+
+	if err := config.DB.First(&item, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Item tidak ditemukan"})
+		return
+	}
+
+	if err := c.ShouldBindJSON(&item); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := config.DB.Save(&item).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal update item"})
+		return
+	}
+
+	c.JSON(http.StatusOK, item)
+}
+
+func DeleteItem(c *gin.Context) {
+	id := c.Param("id")
+	if err := config.DB.Delete(&models.Item{}, id).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal menghapus item"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Item berhasil dihapus"})
+}
