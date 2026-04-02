@@ -1,0 +1,43 @@
+2026/04/01 15:43:32 Database terkoneksi (SQLite)...
+2026/04/01 15:43:32 Migrasi tabel selesai.
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] GET    /ping                     --> main.main.func1 (4 handlers)
+[GIN-debug] GET    /api/items                --> medistock/controllers.GetItems (4 handlers)
+[GIN-debug] GET    /api/items/:id            --> medistock/controllers.GetItemByID (4 handlers)
+[GIN-debug] POST   /api/items                --> medistock/controllers.CreateItem (4 handlers)
+[GIN-debug] PUT    /api/items/:id            --> medistock/controllers.UpdateItem (4 handlers)
+[GIN-debug] DELETE /api/items/:id            --> medistock/controllers.DeleteItem (4 handlers)
+[GIN-debug] POST   /api/transactions         --> medistock/controllers.CreateTransaction (4 handlers)
+[GIN-debug] GET    /api/ledger               --> medistock/controllers.GetLedger (4 handlers)
+[GIN-debug] GET    /api/dashboard/stats      --> medistock/controllers.GetDashboardStats (4 handlers)
+2026/04/01 15:43:32 Server berjalan di http://0.0.0.0:8080
+[GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
+Please check https://github.com/gin-gonic/gin/blob/master/docs/doc.md#dont-trust-all-proxies for details.
+[GIN-debug] Listening and serving HTTP on :8080
+[GIN] 2026/04/01 - 15:52:27 | 200 | 891.035µs |             ::1 | GET      "/api/dashboard/stats"
+[GIN] 2026/04/01 - 15:52:27 | 200 | 853.485µs |             ::1 | GET      "/api/dashboard/stats"
+[GIN] 2026/04/01 - 15:52:38 | 200 |   1.55ms |             ::1 | GET      "/api/items"
+[GIN] 2026/04/01 - 15:52:38 | 200 | 879.584µs |             ::1 | GET      "/api/items"
+[GIN] 2026/04/01 - 15:52:39 | 200 | 794.184µs |             ::1 | GET      "/api/items"
+[GIN] 2026/04/01 - 15:52:39 | 200 | 420.35µs |             ::1 | GET      "/api/items"
+[GIN] 2026/04/01 - 15:52:40 | 200 | 624.955µs |             ::1 | GET      "/api/ledger"
+[GIN] 2026/04/01 - 15:52:40 | 200 | 695.547µs |             ::1 | GET      "/api/ledger"
+[GIN] 2026/04/01 - 15:52:43 | 200 | 756.072µs |             ::1 | GET      "/api/items"
+[GIN] 2026/04/01 - 15:52:43 | 200 | 557.779µs |             ::1 | GET      "/api/items"
+[GIN] 2026/04/01 - 15:52:43 | 200 | 530.116µs |             ::1 | GET      "/api/items"
+[GIN] 2026/04/01 - 15:52:43 | 200 | 524.136µs |             ::1 | GET      "/api/items"
+[GIN] 2026/04/01 - 15:52:43 | 200 |   1.26ms |             ::1 | GET      "/api/dashboard/stats"
+[GIN] 2026/04/01 - 15:52:43 | 200 |   1.32ms |             ::1 | GET      "/api/dashboard/stats"
+[GIN] 2026/04/01 - 15:55:44 | 200 | 677.655µs |             ::1 | GET      "/api/items"
+[GIN] 2026/04/01 - 15:55:44 | 200 | 763.465µs |             ::1 | GET      "/api/items"
+[GIN] 2026/04/01 - 15:55:45 | 200 |   1.02ms |             ::1 | GET      "/api/items"
+[GIN] 2026/04/01 - 15:55:45 | 200 | 731.956µs |             ::1 | GET      "/api/items"
+[GIN] 2026/04/01 - 15:56:02 | 200 | 942.542µs |             ::1 | GET      "/api/items"
+[GIN] 2026/04/01 - 15:56:02 | 200 | 902.196µs |             ::1 | GET      "/api/items"
+[GIN] 2026/04/01 - 15:56:04 | 200 |    1.4ms |             ::1 | GET      "/api/dashboard/stats"
+[GIN] 2026/04/01 - 15:56:04 | 200 |   1.57ms |             ::1 | GET      "/api/dashboard/stats"
