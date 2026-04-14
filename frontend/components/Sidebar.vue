@@ -1,15 +1,14 @@
 <template>
   <aside class="sidebar">
     <div class="sidebar-header">
-      <ShieldPlus class="logo-icon" :size="24" />
-      <h2>MediStock</h2>
+      <img src="/img/Medistock.png" alt="MediStock Logo" height="36" class="logo-icon" style="object-fit: contain; flex:1;" />
       <div class="menu-trigger">≡</div>
     </div>
     
     <div class="sidebar-scroll">
       <div class="menu-group">
         <div class="menu-label">MAIN MENU</div>
-        <NuxtLink to="/" class="menu-item" active-class="active">
+        <NuxtLink to="/dashboard" class="menu-item" active-class="active">
           <LayoutDashboard :size="20" />
           <span>Dashboard</span>
         </NuxtLink>
