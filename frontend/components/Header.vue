@@ -20,17 +20,39 @@
         <Settings :size="20" />
       </button>
       
-      <div class="user-profile">
-        <div class="avatar">
-          <img src="https://ui-avatars.com/api/?name=User&background=f97316&color=fff" alt="User Avatar" />
+      <div class="user-profile" style="display: flex; align-items: center; gap: 0.75rem;">
+        <div style="text-align: right;">
+          <div style="font-size: 0.8rem; font-weight: 600; color: var(--text-main);">{{ userEmail }}</div>
+          <div style="font-size: 0.7rem; color: var(--text-muted);">Staf Farmasi</div>
         </div>
+        <div class="avatar">
+          <img :src="avatarUrl" alt="User Avatar" />
+        </div>
+        <button class="icon-btn logout-btn" @click="handleLogout" title="Keluar">
+          <LogOut :size="18" />
+        </button>
       </div>
     </div>
   </header>
 </template>
 
 <script setup>
-import { Search, Download, Rocket, Settings } from 'lucide-vue-next';
+import { Search, Download, Rocket, Settings, LogOut } from 'lucide-vue-next';
+
+const supabase = useSupabaseClient();
+const user = useSupabaseUser();
+const router = useRouter();
+
+const userEmail = computed(() => user.value?.email || '');
+const avatarUrl = computed(() => {
+  const name = encodeURIComponent(userEmail.value.split('@')[0] || 'User');
+  return `https://ui-avatars.com/api/?name=${name}&background=0f172a&color=fff`;
+});
+
+async function handleLogout() {
+  await supabase.auth.signOut();
+  router.push('/login');
+}
 </script>
 
 <style scoped>
@@ -94,6 +116,11 @@ import { Search, Download, Rocket, Settings } from 'lucide-vue-next';
 .icon-btn:hover {
   background-color: var(--bg-color);
   color: var(--text-main);
+}
+
+.logout-btn:hover {
+  background-color: #fef2f2 !important;
+  color: #dc2626 !important;
 }
 
 .user-profile {
