@@ -58,6 +58,11 @@ import { ref, onMounted } from 'vue';
 import { fetchLedger } from '@/utils/api';
 import { Clock, ArrowDownRight, ArrowUpRight } from 'lucide-vue-next';
 
+definePageMeta({
+  middleware: 'auth',
+  layout: 'default'
+});
+
 const transactions = ref([]);
 
 onMounted(async () => {

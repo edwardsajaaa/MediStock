@@ -137,6 +137,11 @@ import { ref, computed, onMounted } from 'vue';
 import { fetchItems, createTransaction } from '@/utils/api';
 import { ArrowDownRight, ArrowUpRight, Plus, Trash2 } from 'lucide-vue-next';
 
+definePageMeta({
+  middleware: 'auth',
+  layout: 'default'
+});
+
 const items = ref([]);
 const type = ref('OUT');
 const notes = ref('');

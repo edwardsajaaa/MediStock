@@ -110,6 +110,11 @@ import { ref, onMounted, reactive } from 'vue';
 import { Plus, Search, Archive } from 'lucide-vue-next';
 import { fetchItems, createItem } from '@/utils/api';
 
+definePageMeta({
+  middleware: 'auth',
+  layout: 'default'
+});
+
 const items = ref([]);
 const showForm = ref(false);
 const formData = reactive({

@@ -10,11 +10,12 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@nuxtjs/supabase": "^2.0.5",
+    "apexcharts": "^3.49.1",
+    "lucide-vue-next": "^0.378.0",
     "nuxt": "^3.11.0",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0",
-    "lucide-vue-next": "^0.378.0",
-    "vue3-apexcharts": "^1.5.3",
-    "apexcharts": "^3.49.1"
+    "vue3-apexcharts": "^1.5.3"
   }
 }
