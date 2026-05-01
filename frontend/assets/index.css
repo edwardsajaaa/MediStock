@@ -1,7 +1,7 @@
 :root {
   --primary-color: #256e5f;
   --primary-hover: #1d574b;
-  --bg-color: #f8fafc;
+  --bg-color: #f5f7fb;
   --sidebar-bg: #ffffff;
   --text-main: #1e293b;
   --text-muted: #64748b;
@@ -46,7 +46,7 @@ body {
 }
 
 .sidebar {
-  width: 250px;
+  width: 224px;
   background-color: var(--sidebar-bg);
   border-right: 1px solid var(--border-color);
   display: flex;
@@ -54,13 +54,45 @@ body {
   position: fixed;
   height: 100vh;
   z-index: 10;
+  transition: width 0.22s ease, transform 0.22s ease;
 }
 
 .main-content {
   flex: 1;
-  margin-left: 250px;
+  margin-left: 224px;
   display: flex;
   flex-direction: column;
+  transition: margin-left 0.22s ease;
+}
+
+.app-container.sidebar-closed .sidebar {
+  width: 84px;
+}
+
+.app-container.sidebar-closed .main-content {
+  margin-left: 84px;
+}
+
+@media (max-width: 900px) {
+  .sidebar {
+    width: 224px;
+    transform: translateX(-100%);
+    z-index: 20;
+  }
+
+  .app-container.sidebar-open .sidebar {
+    transform: translateX(0);
+  }
+
+  .app-container.sidebar-closed .sidebar {
+    transform: translateX(-100%);
+    width: 224px;
+  }
+
+  .main-content,
+  .app-container.sidebar-closed .main-content {
+    margin-left: 0;
+  }
 }
 
 /* General Layout Utilities */
@@ -110,8 +142,8 @@ body {
 /* Components */
 .card {
   background-color: var(--card-bg);
-  border-radius: var(--radius-lg);
-  padding: 1.5rem;
+  border-radius: 14px;
+  padding: 1.25rem;
   box-shadow: var(--shadow-card);
   border: 1px solid var(--border-color);
 }
@@ -120,7 +152,7 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.5rem 1rem;
+  padding: 0.45rem 0.9rem;
   border-radius: var(--radius-md);
   font-weight: 500;
   font-size: 0.875rem;
@@ -163,7 +195,7 @@ body {
 .input {
   display: block;
   width: 100%;
-  padding: 0.5rem 0.75rem;
+  padding: 0.45rem 0.75rem;
   font-family: inherit;
   font-size: 0.875rem;
   line-height: 1.5;

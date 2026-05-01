@@ -1,29 +1,34 @@
 <template>
   <header class="header">
+    <button class="icon-btn toggle-btn" :aria-label="isSidebarOpen ? 'Tutup menu' : 'Buka menu'" @click="toggleSidebar">
+      <PanelLeftClose v-if="isSidebarOpen" :size="18" />
+      <PanelLeftOpen v-else :size="18" />
+    </button>
+
     <div class="search-bar">
       <Search :size="18" class="search-icon" />
       <input 
         type="text" 
-        placeholder="Search anything here..." 
+        placeholder="Cari data..."
         class="search-input"
       />
     </div>
     
     <div class="header-actions">
-      <button class="icon-btn">
+      <button class="icon-btn" aria-label="Unduh">
         <Download :size="20" />
       </button>
-      <button class="icon-btn">
+      <button class="icon-btn" aria-label="Sinkronisasi">
         <Rocket :size="20" />
       </button>
-      <button class="icon-btn">
+      <button class="icon-btn" aria-label="Pengaturan">
         <Settings :size="20" />
       </button>
       
       <div class="user-profile" style="display: flex; align-items: center; gap: 0.75rem;">
-        <div style="text-align: right;">
-          <div style="font-size: 0.8rem; font-weight: 600; color: var(--text-main);">{{ userEmail }}</div>
-          <div style="font-size: 0.7rem; color: var(--text-muted);">Staf Farmasi</div>
+        <div style="text-align: right; line-height: 1.2;">
+          <div style="font-size: 0.78rem; font-weight: 600; color: var(--text-main);">{{ userEmail }}</div>
+          <div style="font-size: 0.68rem; color: var(--text-muted);">{{ role }}</div>
         </div>
         <div class="avatar">
           <img :src="avatarUrl" alt="User Avatar" />
@@ -37,11 +42,15 @@
 </template>
 
 <script setup>
-import { Search, Download, Rocket, Settings, LogOut } from 'lucide-vue-next';
+import { Search, Download, Rocket, Settings, LogOut, PanelLeftClose, PanelLeftOpen } from 'lucide-vue-next';
+import { useAuthRole } from '@/composables/useAuthRole';
+import { useSidebar } from '@/composables/useSidebar';
 
 const supabase = useSupabaseClient();
 const user = useSupabaseUser();
 const router = useRouter();
+const { role } = useAuthRole();
+const { isSidebarOpen, toggleSidebar } = useSidebar();
 
 const userEmail = computed(() => user.value?.email || '');
 const avatarUrl = computed(() => {
@@ -50,8 +59,8 @@ const avatarUrl = computed(() => {
 });
 
 async function handleLogout() {
-  await supabase.auth.signOut();
-  router.push('/login');
+  await supabase.auth.signOut()
+  await router.push('/login')
 }
 </script>
 
@@ -59,11 +68,12 @@ async function handleLogout() {
 .header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 1rem 1.5rem;
+  justify-content: flex-start;
+  padding: 0.85rem 1.25rem;
   background-color: var(--sidebar-bg);
   border-bottom: 1px solid var(--border-color);
-  height: 70px;
+  height: 60px;
+  gap: 0.7rem;
 }
 
 .search-bar {
@@ -71,8 +81,8 @@ async function handleLogout() {
   align-items: center;
   background-color: var(--bg-color);
   border-radius: var(--radius-md);
-  padding: 0.5rem 1rem;
-  width: 350px;
+  padding: 0.4rem 0.9rem;
+  width: 280px;
   border: 1px solid var(--border-color);
 }
 
@@ -97,7 +107,13 @@ async function handleLogout() {
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.65rem;
+  margin-left: auto;
+}
+
+.toggle-btn {
+  border: 1px solid var(--border-color);
+  background: var(--card-bg);
 }
 
 .icon-btn {
@@ -105,7 +121,8 @@ async function handleLogout() {
   border: none;
   color: var(--text-muted);
   cursor: pointer;
-  padding: 0.5rem;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -124,16 +141,15 @@ async function handleLogout() {
 }
 
 .user-profile {
-  margin-left: 0.5rem;
-  cursor: pointer;
+  margin-left: 0.35rem;
 }
 
 .avatar {
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   overflow: hidden;
-  border: 2px solid white;
+  border: 1px solid white;
   box-shadow: var(--shadow-sm);
 }
 
