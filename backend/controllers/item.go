@@ -4,15 +4,40 @@ import (
 	"medistock/config"
 	"medistock/models"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
+func parsePaging(c *gin.Context, defaultLimit int) (page int, limit int, offset int) {
+	page = 1
+	limit = defaultLimit
+
+	if rawPage := c.Query("page"); rawPage != "" {
+		if parsed, err := strconv.Atoi(rawPage); err == nil && parsed > 0 {
+			page = parsed
+		}
+	}
+
+	if rawLimit := c.Query("limit"); rawLimit != "" {
+		if parsed, err := strconv.Atoi(rawLimit); err == nil && parsed > 0 {
+			if parsed > 100 {
+				parsed = 100
+			}
+			limit = parsed
+		}
+	}
+
+	offset = (page - 1) * limit
+	return page, limit, offset
+}
+
 func GetItems(c *gin.Context) {
 	var items []models.Item
+	page, limit, offset := parsePaging(c, 20)
 	
 	// Preload batches untuk menghitung stok total per item secara gampang (walau bisa di query spesifik)
-	if err := config.DB.Preload("Batches").Find(&items).Error; err != nil {
+	if err := config.DB.Preload("Batches").Order("created_at DESC").Limit(limit).Offset(offset).Find(&items).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal mengambil data"})
 		return
 	}
@@ -35,7 +60,11 @@ func GetItems(c *gin.Context) {
 		response = append(response, res)
 	}
 
-	c.JSON(http.StatusOK, response)
+	c.JSON(http.StatusOK, gin.H{
+		"data":  response,
+		"page":  page,
+		"limit": limit,
+	})
 }
 
 func GetItemByID(c *gin.Context) {

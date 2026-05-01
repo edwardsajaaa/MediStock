@@ -5,6 +5,7 @@ import (
 	"medistock/config"
 	"medistock/models"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -171,8 +172,24 @@ func CreateTransaction(c *gin.Context) {
 // Untuk laporan Ledger / Kartu Stok
 func GetLedger(c *gin.Context) {
 	var trx []models.Transaction
+	page := 1
+	limit := 20
+
+	if rawPage := c.Query("page"); rawPage != "" {
+		if parsed, err := strconv.Atoi(rawPage); err == nil && parsed > 0 {
+			page = parsed
+		}
+	}
+	if rawLimit := c.Query("limit"); rawLimit != "" {
+		if parsed, err := strconv.Atoi(rawLimit); err == nil && parsed > 0 {
+			if parsed > 100 {
+				parsed = 100
+			}
+			limit = parsed
+		}
+	}
 	// Preload nested associations
-	if err := config.DB.Preload("Items.Item").Preload("Items.Batch").Order("date DESC").Find(&trx).Error; err != nil {
+	if err := config.DB.Preload("Items.Item").Preload("Items.Batch").Order("date DESC").Limit(limit).Offset((page-1)*limit).Find(&trx).Error; err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal menarik data histori mutasi"})
 		return
