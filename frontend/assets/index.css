@@ -249,3 +249,24 @@ body {
 .page-title { font-size: 1.0625rem; font-weight: 600; }
 
 .badge-primary { background-color: #ecfdf5; color: #065f46; }
+
+.ledger-pill-in,
+.ledger-pill-out {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.4rem;
+  border-radius: 8px;
+}
+
+.ledger-pill-in { background-color: #ecfdf5; }
+.ledger-pill-out { background-color: #fef2f2; }
+
+.ledger-item-row {
+  padding: 0.15rem 0;
+  border-bottom: 1px dashed rgba(226, 232, 240, 0.85);
+}
+
+.ledger-item-row-last {
+  border-bottom: none;
+}

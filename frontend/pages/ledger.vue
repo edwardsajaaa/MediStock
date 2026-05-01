@@ -1,30 +1,30 @@
 <template>
   <div class="flex-col gap-6">
     <div class="mb-6">
-      <h1 class="text-xl font-semibold">Kartu Stok</h1>
-      <p class="text-muted">Riwayat mutasi barang masuk dan keluar</p>
+      <h1 class="page-title">Kartu Stok</h1>
+      <p class="text-sm text-muted">Riwayat mutasi barang masuk dan keluar</p>
     </div>
 
     <div class="card">
-      <table style="width: 100%; border-collapse: collapse">
-        <thead style="border-bottom: 1px solid var(--border-color); text-align: left">
+      <table class="table" role="table" aria-label="Riwayat kartu stok">
+        <thead>
           <tr>
-            <th class="py-2 text-sm text-muted">Arah</th>
-            <th class="py-2 text-sm text-muted">Waktu</th>
-            <th class="py-2 text-sm text-muted">Detail Barang</th>
-            <th class="py-2 text-sm text-muted text-right">Nilai</th>
-            <th class="py-2 text-sm text-muted">Catatan</th>
+            <th>Arah</th>
+            <th>Waktu</th>
+            <th>Detail Barang</th>
+            <th class="text-right">Nilai</th>
+            <th>Catatan</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="trx in transactions" :key="trx.id" style="border-bottom: 1px solid var(--border-color)">
+          <tr v-for="trx in transactions" :key="trx.id">
             <td class="py-4">
               <div class="flex items-center gap-2">
-                <div :style="{background: trx.type === 'IN' ? '#ecfdf5' : '#fef2f2', padding: '0.5rem', borderRadius: '0.25rem'}">
-                  <ArrowDownRight v-if="trx.type === 'IN'" size="18" color="#10b981" />
-                  <ArrowUpRight v-else size="18" color="#ef4444" />
+                <div :class="trx.type === 'IN' ? 'ledger-pill-in' : 'ledger-pill-out'">
+                  <ArrowDownRight v-if="trx.type === 'IN'" size="18" class="text-primary" />
+                  <ArrowUpRight v-else size="18" class="text-danger" />
                 </div>
-                <span class="font-bold" :style="{color: trx.type === 'IN' ? '#10b981' : '#ef4444'}">{{ trx.type }}</span>
+                <span class="font-semibold" :class="trx.type === 'IN' ? 'text-primary' : 'text-danger'">{{ trx.type }}</span>
               </div>
             </td>
             <td class="py-4">
@@ -35,14 +35,14 @@
             </td>
             <td class="py-4">
               <div class="text-sm">
-                <div v-for="(item, idxx) in trx.items" :key="idxx" :style="{borderBottom: idxx < trx.items.length - 1 ? '1px dashed #e2e8f0' : 'none', padding: '2px 0'}">
-                  <span class="font-semibold">{{ item.qty }}x</span> {{ item.item?.name }} 
-                  <span class="text-muted text-xs ml-2">(Batch: {{ item.batch?.batch_number }})</span>
+                <div v-for="(item, idxx) in trx.items" :key="idxx" class="ledger-item-row" :class="{ 'ledger-item-row-last': idxx === trx.items.length - 1 }">
+                  <span class="font-semibold">{{ item.qty }}x</span> {{ item.item?.name }}
+                  <span class="text-xs text-muted ml-2">(Batch: {{ item.batch?.batch_number }})</span>
                 </div>
               </div>
             </td>
-            <td class="py-4 text-right font-medium text-main">Rp {{ trx.total_amount.toLocaleString() }}</td>
-            <td class="py-4 text-sm text-muted italic">{{ trx.notes || '-' }}</td>
+            <td class="py-4 text-right font-medium text-primary">Rp {{ trx.total_amount.toLocaleString() }}</td>
+            <td class="py-4 text-sm text-muted">{{ trx.notes || '-' }}</td>
           </tr>
           <tr v-if="transactions.length === 0">
             <td colspan="5" class="text-center py-6 text-muted">Belum ada riwayat mutasi.</td>
