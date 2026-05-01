@@ -29,8 +29,8 @@ defineProps({
 <style scoped>
 .metric-card {
   background-color: var(--card-bg);
-  border-radius: var(--radius-lg);
-  padding: 1.5rem;
+  border-radius: 14px;
+  padding: 1.15rem 1.2rem;
   box-shadow: var(--shadow-sm);
   border: 1px solid var(--border-color);
   display: flex;
@@ -50,8 +50,8 @@ defineProps({
 }
 
 .metric-value {
-  font-size: 1.75rem;
-  font-weight: 700;
+  font-size: 1.55rem;
+  font-weight: 600;
   color: var(--text-main);
   margin-bottom: 1rem;
 }

@@ -274,6 +274,10 @@ const footerLinks = [
   margin: 0 auto;
 }
 
+.hero-content {
+  max-width: 620px;
+}
+
 .hero-eyebrow {
   font-size: 0.78rem;
   font-weight: 400;
@@ -284,10 +288,10 @@ const footerLinks = [
 }
 
 .hero-content h1 {
-  font-size: 4.2rem;
+  font-size: 4rem;
   font-weight: 400;
   color: #fff;
-  line-height: 1.15;
+  line-height: 1.08;
   margin-bottom: 1.75rem;
   letter-spacing: -0.03em;
 }
@@ -298,7 +302,7 @@ const footerLinks = [
   font-size: 1.05rem;
   font-weight: 300;
   color: rgba(255,255,255,0.55);
-  max-width: 480px;
+  max-width: 460px;
   line-height: 1.8;
   margin-bottom: 2.5rem;
 }
@@ -345,6 +349,7 @@ const footerLinks = [
 .trust-bar {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 2.5rem;
   padding: 1.25rem 9%;
   background: #f9fafb;
@@ -357,6 +362,7 @@ const footerLinks = [
   font-weight: 400;
   color: #94a3b8;
   white-space: nowrap;
+  text-align: center;
   letter-spacing: 0.04em;
 }
 
@@ -364,6 +370,7 @@ const footerLinks = [
   display: flex;
   gap: 2rem;
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 .trust-item {
