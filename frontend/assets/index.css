@@ -243,7 +243,7 @@ body {
 .table tbody tr:hover { background-color: rgba(16,24,40,0.02); }
 
 .search-wrap { position: relative; }
-.search-wrap .icon { position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: var(--text-light); }
+.search-wrap .icon { position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
 .search-input { padding-left: 2.2rem; width: 280px; max-width: 100%; }
 
 .page-title { font-size: 1.0625rem; font-weight: 600; }
