@@ -2,8 +2,8 @@
   <div class="flex-col gap-6">
     <div class="flex justify-between items-center mb-6">
       <div>
-        <h1 class="text-xl font-semibold">Data Master</h1>
-        <p class="text-muted">Kelola data obat dan alat kesehatan</p>
+        <h1 class="page-title">Data Master</h1>
+        <p class="text-sm text-muted">Kelola data obat dan alat kesehatan</p>
       </div>
       <button v-if="isAdmin" class="btn btn-primary gap-2" @click="showForm = !showForm">
         <Plus size="18" />
@@ -11,7 +11,7 @@
       </button>
     </div>
 
-    <div v-if="showForm && isAdmin" class="card mb-6" style="animation: fadeIn 0.2s ease-in">
+    <div v-if="showForm && isAdmin" class="card mb-6">
       <h2 class="text-base font-semibold mb-4">Tambah Data Baru</h2>
       <form @submit.prevent="handleSubmit" class="grid grid-cols-2 gap-4">
         <div>
@@ -50,9 +50,9 @@
 
     <div class="card">
       <div class="flex justify-between items-center mb-4">
-        <div class="relative">
-          <Search class="absolute left-3 top-1/2" style="transform: translateY(-50%); color: var(--text-light)" size="18" />
-          <input type="text" placeholder="Cari data..." class="input" style="padding-left: 2.5rem; width: 260px" />
+        <div class="search-wrap">
+          <Search class="icon" size="18" />
+          <input aria-label="Cari data" type="text" placeholder="Cari data..." class="input search-input" />
         </div>
       </div>
 
@@ -60,45 +60,39 @@
         Mode staf: data master hanya bisa dilihat. Penambahan dan ubah data hanya untuk Admin.
       </div>
       
-      <table style="width: 100%; border-collapse: collapse">
-        <thead style="border-bottom: 1px solid var(--border-color); text-align: left">
+      <table class="table" role="table" aria-label="Daftar barang">
+        <thead>
           <tr>
-            <th class="py-2 text-sm text-muted font-semibold">SKU</th>
-            <th class="py-2 text-sm text-muted font-semibold">Nama</th>
-            <th class="py-2 text-sm text-muted font-semibold">Kategori</th>
-            <th class="py-2 text-sm text-muted font-semibold text-right">Stok</th>
-            <th class="py-2 text-sm text-muted font-semibold text-right">Harga Jual</th>
+            <th>SKU</th>
+            <th>Nama</th>
+            <th>Kategori</th>
+            <th class="text-right">Stok</th>
+            <th class="text-right">Harga Jual</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="item in items" :key="item.id" style="border-bottom: 1px solid var(--border-color)">
-            <td class="py-3 font-medium">{{ item.sku }}</td>
-            <td class="py-3">
+          <tr v-for="item in items" :key="item.id">
+            <td class="font-medium">{{ item.sku }}</td>
+            <td>
               <div class="flex items-center gap-2">
-                <div style="background: var(--bg-color); padding: 0.4rem; border-radius: 0.35rem">
+                <div style="background: var(--bg-color); padding: 0.35rem; border-radius: 6px">
                   <Archive size="16" class="text-primary" />
                 </div>
                 <span class="font-semibold">{{ item.name }}</span>
               </div>
             </td>
-            <td class="py-3">
-              <span 
-                class="badge" 
+            <td>
+              <span
+                class="badge"
                 :class="item.category === 'Alkes' ? 'badge-primary' : (item.category === 'Obat Resep' ? 'badge-danger' : 'badge-success')"
-                :style="{
-                  backgroundColor: item.category === 'Obat Resep' ? '#fee2e2' : item.category === 'Alkes' ? '#e0f2fe' : '', 
-                  color: item.category === 'Obat Resep' ? '#991b1b' : item.category === 'Alkes' ? '#0369a1' : ''
-                }"
               >
                 {{ item.category }}
               </span>
             </td>
-            <td class="py-3 text-right">
-              <span class="font-semibold" :class="item.total_stock <= item.min_stock && item.total_stock > 0 ? 'text-primary' : item.total_stock === 0 ? 'text-danger' : ''" :style="{color: item.total_stock === 0 ? 'red': ''}">
-                {{ item.total_stock }}
-              </span>
+            <td class="text-right">
+              <span class="font-semibold" :class="item.total_stock === 0 ? 'text-danger' : ''">{{ item.total_stock }}</span>
             </td>
-            <td class="py-3 text-right font-medium text-primary">Rp {{ item.sell_price.toLocaleString() }}</td>
+            <td class="text-right font-medium text-primary">Rp {{ item.sell_price.toLocaleString() }}</td>
           </tr>
           <tr v-if="items.length === 0">
             <td colspan="5" class="text-center py-6 text-muted">Belum ada data barang</td>
