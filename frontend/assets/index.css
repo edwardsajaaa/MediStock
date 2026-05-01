@@ -238,7 +238,7 @@ body {
 
 .search-wrap { position: relative; }
 .search-wrap .icon { position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: var(--text-light); }
-.search-input { padding-left: 2.2rem; width: 320px; max-width: 100%; }
+.search-input { padding-left: 2.2rem; width: 280px; max-width: 100%; }
 
 .page-title { font-size: 1.125rem; font-weight: 600; }
 
