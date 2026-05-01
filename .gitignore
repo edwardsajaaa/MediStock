@@ -4,6 +4,7 @@ backend/medistock
 backend/medistock.db
 backend/.env
 backend/.env.*
+!backend/.env.example
 frontend/frontend.log
 frontend/.env
 frontend/.nuxt/

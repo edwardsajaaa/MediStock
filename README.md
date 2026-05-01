@@ -78,31 +78,30 @@ MediStock adalah aplikasi web profesional untuk digitalisasi dan otomasi manajem
 
 ### Backend
 1. Masuk ke folder `backend`
-2. Inisialisasi Go module: `go mod init medistock`
-3. Install Gin/Fiber:
-	- Gin: `go get github.com/gin-gonic/gin`
-	- Fiber: `go get github.com/gofiber/fiber/v2`
-4. Setup koneksi ke Supabase PostgreSQL:
-	- Dapatkan URL, user, password, dan database dari dashboard Supabase
-	- Gunakan ORM seperti GORM untuk query
-	- Contoh koneksi:
-	  ```go
-	  import (
-			"gorm.io/driver/postgres"
-			"gorm.io/gorm"
-	  )
-	  dsn := "host=... user=... password=... dbname=... port=... sslmode=disable"
-	  db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-	  ```
+2. Jalankan `go mod tidy`
+3. Set env database untuk Supabase PostgreSQL:
+	- Opsi 1: `DATABASE_URL` (disarankan)
+	- Opsi 2: `SUPABASE_DB_HOST`, `SUPABASE_DB_PORT`, `SUPABASE_DB_NAME`, `SUPABASE_DB_USER`, `SUPABASE_DB_PASSWORD`
+4. Contoh `DATABASE_URL`:
+	```env
+	DATABASE_URL=postgresql://USER:PASSWORD@HOST:5432/postgres?sslmode=require
+	```
+5. Backend akan memakai Supabase/Postgres jika env tersedia, dan fallback ke SQLite jika belum diisi.
 
 ### Database
 - Gunakan Supabase sebagai server PostgreSQL
-- Backend terhubung langsung ke Supabase (tanpa auto-API)
+- Backend terhubung langsung ke Supabase Database lewat GORM/Postgres
+- Frontend tetap bisa memakai Supabase Auth dengan `SUPABASE_URL` dan `SUPABASE_KEY`
 
 ## Alur Pengembangan
 - Frontend konsumsi REST API dari backend
 - Backend handle logika bisnis, validasi, dan query database
 - Semua transaksi tercatat otomatis (mutasi, batch, kadaluarsa)
+
+### Env Yang Dipakai
+- `DATABASE_URL` untuk koneksi Postgres Supabase
+- `SUPABASE_DB_HOST`, `SUPABASE_DB_PORT`, `SUPABASE_DB_NAME`, `SUPABASE_DB_USER`, `SUPABASE_DB_PASSWORD` sebagai alternatif jika ingin dipisah
+- `SUPABASE_URL` dan `SUPABASE_KEY` di frontend untuk auth Supabase
 
 ## Referensi & Dokumentasi
 - [Vite](https://vitejs.dev/)
