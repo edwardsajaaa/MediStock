@@ -2,17 +2,17 @@
   <div class="flex-col gap-6">
     <div class="flex justify-between items-center mb-6">
       <div>
-        <h1 class="text-2xl font-bold">Master Data</h1>
+        <h1 class="text-xl font-semibold">Data Master</h1>
         <p class="text-muted">Kelola data obat dan alat kesehatan</p>
       </div>
-      <button class="btn btn-primary gap-2" @click="showForm = !showForm">
+      <button v-if="isAdmin" class="btn btn-primary gap-2" @click="showForm = !showForm">
         <Plus size="18" />
-        {{ showForm ? 'Batal Tambah' : 'Tambah Baru' }}
+        {{ showForm ? 'Tutup Form' : 'Tambah Data' }}
       </button>
     </div>
 
-    <div v-if="showForm" class="card mb-6" style="animation: fadeIn 0.2s ease-in">
-      <h2 class="text-lg font-semibold mb-4">Tambah Data Baru</h2>
+    <div v-if="showForm && isAdmin" class="card mb-6" style="animation: fadeIn 0.2s ease-in">
+      <h2 class="text-base font-semibold mb-4">Tambah Data Baru</h2>
       <form @submit.prevent="handleSubmit" class="grid grid-cols-2 gap-4">
         <div>
           <label class="text-sm font-medium mb-1 block">Nama Item</label>
@@ -27,15 +27,15 @@
           </select>
         </div>
         <div>
-          <label class="text-sm font-medium mb-1 block">SKU / Kode unik</label>
+          <label class="text-sm font-medium mb-1 block">SKU / Kode Unik</label>
           <input required type="text" class="input" v-model="formData.sku" />
         </div>
         <div>
-          <label class="text-sm font-medium mb-1 block">Min Stock (Alert)</label>
+          <label class="text-sm font-medium mb-1 block">Stok Minimum</label>
           <input type="number" class="input" v-model="formData.min_stock" />
         </div>
         <div>
-          <label class="text-sm font-medium mb-1 block">Harga Beli Dasar</label>
+          <label class="text-sm font-medium mb-1 block">Harga Beli</label>
           <input type="number" class="input" v-model="formData.base_price" />
         </div>
         <div>
@@ -52,17 +52,21 @@
       <div class="flex justify-between items-center mb-4">
         <div class="relative">
           <Search class="absolute left-3 top-1/2" style="transform: translateY(-50%); color: var(--text-light)" size="18" />
-          <input type="text" placeholder="Cari item..." class="input" style="padding-left: 2.5rem; width: 300px" />
+          <input type="text" placeholder="Cari data..." class="input" style="padding-left: 2.5rem; width: 260px" />
         </div>
+      </div>
+
+      <div v-if="!isAdmin" class="mb-4 rounded-lg border px-4 py-3 text-sm" style="border-color: #dbeafe; background: #eff6ff; color: #1e3a8a;">
+        Mode staf: data master hanya bisa dilihat. Penambahan dan ubah data hanya untuk Admin.
       </div>
       
       <table style="width: 100%; border-collapse: collapse">
         <thead style="border-bottom: 1px solid var(--border-color); text-align: left">
           <tr>
             <th class="py-2 text-sm text-muted font-semibold">SKU</th>
-            <th class="py-2 text-sm text-muted font-semibold">Nama Item</th>
+            <th class="py-2 text-sm text-muted font-semibold">Nama</th>
             <th class="py-2 text-sm text-muted font-semibold">Kategori</th>
-            <th class="py-2 text-sm text-muted font-semibold text-right">Stok Aktif</th>
+            <th class="py-2 text-sm text-muted font-semibold text-right">Stok</th>
             <th class="py-2 text-sm text-muted font-semibold text-right">Harga Jual</th>
           </tr>
         </thead>
@@ -71,7 +75,7 @@
             <td class="py-3 font-medium">{{ item.sku }}</td>
             <td class="py-3">
               <div class="flex items-center gap-2">
-                <div style="background: var(--bg-color); padding: 0.5rem; border-radius: 0.25rem">
+                <div style="background: var(--bg-color); padding: 0.4rem; border-radius: 0.35rem">
                   <Archive size="16" class="text-primary" />
                 </div>
                 <span class="font-semibold">{{ item.name }}</span>
@@ -101,14 +105,21 @@
           </tr>
         </tbody>
       </table>
+
+      <div class="flex items-center justify-between mt-4 pt-4" style="border-top: 1px solid var(--border-color)">
+        <button class="btn btn-outline" :disabled="currentPage === 1" @click="loadItems(currentPage - 1)">Sebelumnya</button>
+        <span class="text-sm text-muted">Halaman {{ currentPage }}</span>
+        <button class="btn btn-outline" :disabled="items.length < pageSize" @click="loadItems(currentPage + 1)">Berikutnya</button>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, reactive } from 'vue';
+import { ref, onMounted, reactive, watchEffect } from 'vue';
 import { Plus, Search, Archive } from 'lucide-vue-next';
 import { fetchItems, createItem } from '@/utils/api';
+import { useAuthRole } from '@/composables/useAuthRole';
 
 definePageMeta({
   middleware: 'auth',
@@ -116,15 +127,25 @@ definePageMeta({
 });
 
 const items = ref([]);
+const currentPage = ref(1);
+const pageSize = 20;
 const showForm = ref(false);
+const { isAdmin } = useAuthRole();
 const formData = reactive({
   name: '', category: 'Obat Bebas', sku: '', min_stock: 0, base_price: 0, sell_price: 0
 });
 
-const loadItems = async () => {
+watchEffect(() => {
+  if (!isAdmin.value) {
+    showForm.value = false;
+  }
+});
+
+const loadItems = async (page = 1) => {
   try {
-    const data = await fetchItems();
-    items.value = data || [];
+    currentPage.value = page;
+    const data = await fetchItems({ page, limit: pageSize });
+    items.value = data?.data || [];
   } catch (e) {
     console.error(e);
   }
@@ -133,6 +154,8 @@ const loadItems = async () => {
 onMounted(() => { loadItems(); });
 
 const handleSubmit = async () => {
+  if (!isAdmin.value) return;
+
   try {
     const data = {
       ...formData,
@@ -142,7 +165,7 @@ const handleSubmit = async () => {
     };
     await createItem(data);
     showForm.value = false;
-    loadItems();
+    loadItems(currentPage.value);
   } catch (e) {
     alert(e.message);
   }
