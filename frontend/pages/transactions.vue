@@ -2,21 +2,20 @@
   <div class="flex-col gap-6">
     <div class="flex justify-between items-center mb-6">
       <div>
-        <h1 class="text-2xl font-bold">Transaksi</h1>
-        <p class="text-muted">Pencatatan barang masuk dan keluar</p>
+        <h1 class="page-title">Transaksi</h1>
+        <p class="text-sm text-muted">Pencatatan barang masuk dan keluar</p>
       </div>
-      <div class="bg-white rounded-lg p-1 border shadow-sm" style="display: flex; gap: 4px; border-color: var(--border-color);">
-        <button 
-          class="px-4 py-2 font-semibold text-sm rounded" 
-          :class="type === 'IN' ? 'bg-primary text-white' : 'bg-transparent text-muted hover:bg-gray-50'"
-          :style="{backgroundColor: type === 'IN' ? 'var(--primary-color)' : '', color: type === 'IN' ? 'white' : 'var(--text-muted)'}"
+      <div class="flex gap-2 items-center">
+        <button
+          class="btn"
+          :class="type === 'IN' ? 'btn-primary' : 'btn-outline'
+          "
           @click="type = 'IN'; cart = [];">
           Barang Masuk
         </button>
-        <button 
-          class="px-4 py-2 font-semibold text-sm rounded"
-          :class="type === 'OUT' ? 'bg-danger text-white' : 'bg-transparent text-muted hover:bg-gray-50'"
-          :style="{backgroundColor: type === 'OUT' ? '#ef4444' : '', color: type === 'OUT' ? 'white' : 'var(--text-muted)'}"
+        <button
+          class="btn"
+          :class="type === 'OUT' ? 'btn-primary' : 'btn-outline'"
           @click="type = 'OUT'; cart = [];">
           Barang Keluar
         </button>
@@ -26,16 +25,16 @@
     <div class="grid grid-cols-3 gap-6">
       <!-- Form Add -->
       <div class="card col-span-1">
-        <h2 class="text-lg font-semibold mb-4 border-b pb-2 flex items-center gap-2" style="border-color: var(--border-color);">
+        <h2 class="text-base font-semibold mb-4 flex items-center gap-2">
           <ArrowDownRight v-if="type === 'IN'" class="text-primary"/>
-          <ArrowUpRight v-else style="color: #ef4444;" />
+          <ArrowUpRight v-else class="text-danger" />
           {{ type === 'IN' ? 'Form Barang Masuk' : 'Form Barang Keluar' }}
         </h2>
         
         <div class="flex-col gap-4">
           <div>
             <label class="text-sm font-medium mb-1 block">Pilih Barang</label>
-            <select class="input" v-model="selectedItem">
+            <select aria-label="Pilih Barang" class="input" v-model="selectedItem">
               <option value="">-- Pilih Barang --</option>
               <option v-for="item in items" :key="item.id" :value="item.id">
                 {{ item.name }} - {{ item.sku }} {{ type === 'OUT' ? `(Stok: ${item.total_stock})` : '' }}
@@ -68,33 +67,31 @@
       <!-- Cart -->
       <div class="card col-span-2 flex flex-col justify-between">
         <div>
-          <h2 class="text-lg font-semibold mb-4 border-b pb-2" style="border-color: var(--border-color);">
-            Daftar Transaksi {{ type === 'OUT' ? '(Keluar)' : '(Masuk)' }}
-          </h2>
+          <h2 class="text-base font-semibold mb-4">Daftar Transaksi {{ type === 'OUT' ? '(Keluar)' : '(Masuk)' }}</h2>
           
-          <table style="width: 100%; border-collapse: collapse; margin-bottom: 1rem;">
-            <thead style="border-bottom: 1px solid var(--border-color); text-align: left;">
+          <table class="table" role="table" aria-label="Daftar transaksi">
+            <thead>
               <tr>
-                <th class="py-2 text-sm text-muted">Item</th>
-                <th class="py-2 text-sm text-muted">Qty</th>
-                <th v-if="type === 'IN'" class="py-2 text-sm text-muted">Batch & Kedaluwarsa</th>
-                <th class="py-2 text-sm text-muted text-right">Harga</th>
-                <th class="py-2 text-sm text-muted text-right">Subtotal</th>
+                <th>Item</th>
+                <th>Qty</th>
+                <th v-if="type === 'IN'">Batch & Kedaluwarsa</th>
+                <th class="text-right">Harga</th>
+                <th class="text-right">Subtotal</th>
                 <th></th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(c, idx) in cart" :key="idx" style="border-bottom: 1px solid var(--border-color);">
-                <td class="py-3 font-medium">{{ c.name }}</td>
-                <td class="py-3 font-medium bg-gray-50 text-center rounded">{{ c.qty }}</td>
-                <td v-if="type === 'IN'" class="py-3 text-sm text-muted">
+              <tr v-for="(c, idx) in cart" :key="idx">
+                <td class="font-medium">{{ c.name }}</td>
+                <td class="text-center">{{ c.qty }}</td>
+                <td v-if="type === 'IN'" class="text-sm text-muted">
                   <div>{{ c.batch_number }}</div>
-                  <div style="font-size: 0.7rem;">{{ c.expiry_date }}</div>
+                  <div class="text-xs">{{ c.expiry_date }}</div>
                 </td>
-                <td class="py-3 text-right">Rp {{ c.price.toLocaleString() }}</td>
-                <td class="py-3 text-right font-medium text-primary">Rp {{ (c.qty * c.price).toLocaleString() }}</td>
-                <td class="py-3 text-right">
-                  <button @click="removeFromCart(idx)" style="color: #ef4444; background: none; border: none; cursor: pointer;">
+                <td class="text-right">Rp {{ c.price.toLocaleString() }}</td>
+                <td class="text-right font-medium text-primary">Rp {{ (c.qty * c.price).toLocaleString() }}</td>
+                <td class="text-right">
+                  <button class="btn btn-outline" @click="removeFromCart(idx)" aria-label="Hapus item">
                     <Trash2 size="16"/>
                   </button>
                 </td>
