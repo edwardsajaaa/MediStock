@@ -114,10 +114,14 @@
 </template>
 
 <script setup>
-definePageMeta({ layout: false })
+definePageMeta({
+  layout: false,
+  middleware: 'guest',
+})
 
 const supabase = useSupabaseClient()
 const router = useRouter()
+const route = useRoute()
 
 const email = ref('')
 const password = ref('')
@@ -133,21 +137,26 @@ watchEffect(() => {
 async function handleLogin() {
   loading.value = true
   errorMessage.value = ''
-  const { error } = await supabase.auth.signInWithPassword({
-    email: email.value,
-    password: password.value,
-  })
-  if (error) {
-    if (error.message.includes('Invalid login credentials')) {
-      errorMessage.value = 'Email atau password salah. Silakan coba lagi.'
-    } else if (error.message.includes('Email not confirmed')) {
-      errorMessage.value = 'Email belum dikonfirmasi. Periksa inbox Anda.'
+  try {
+    const { error } = await supabase.auth.signInWithPassword({
+      email: email.value,
+      password: password.value,
+    })
+
+    if (error) {
+      if (error.message.includes('Invalid login credentials')) {
+        errorMessage.value = 'Email atau password salah. Silakan coba lagi.'
+      } else if (error.message.includes('Email not confirmed')) {
+        errorMessage.value = 'Email belum dikonfirmasi. Periksa inbox Anda.'
+      } else {
+        errorMessage.value = error.message
+      }
     } else {
-      errorMessage.value = error.message
+      const redirectPath = typeof route.query.redirect === 'string' ? route.query.redirect : '/dashboard'
+      await router.push(redirectPath)
     }
+  } finally {
     loading.value = false
-  } else {
-    router.push('/dashboard')
   }
 }
 </script>
@@ -163,26 +172,36 @@ async function handleLogin() {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #e8eaf6 0%, #fce4ec 30%, #e3f2fd 60%, #e8f5e9 100%);
+  background:
+    radial-gradient(circle at 15% 20%, rgba(74, 222, 128, 0.14) 0%, transparent 45%),
+    linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
   font-family: 'Poppins', system-ui, -apple-system, sans-serif;
   padding: 1rem;
 }
 
 /* CARD */
 .login-card {
+  --brand-dark: #080f1a;
+  --brand-dark-soft: #0f172a;
+  --brand-surface: #f8fafc;
+  --brand-muted: #64748b;
+  --brand-muted-light: #94a3b8;
+  --brand-green: #22c55e;
+  --brand-green-hover: #16a34a;
   display: flex;
   width: 100%;
   max-width: 1380px;
   min-height: 800px;
   border-radius: 28px;
   overflow: hidden;
-  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.2), 0 12px 32px rgba(0, 0, 0, 0.12);
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 34px 80px rgba(8, 15, 26, 0.22), 0 12px 26px rgba(15, 23, 42, 0.16);
 }
 
 /* ====== LEFT PANEL ====== */
 .left-panel {
   width: 44%;
-  background: url('/img/pic4.jpg') center center / cover no-repeat;
+  background: url('/img/pic1.jpg') center center / cover no-repeat;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -196,16 +215,18 @@ async function handleLogin() {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(160deg, rgba(15, 30, 80, 0.82) 0%, rgba(21, 60, 160, 0.75) 60%, rgba(10, 50, 120, 0.80) 100%);
+  background: linear-gradient(to right, rgba(8, 15, 26, 0.94) 12%, rgba(8, 15, 26, 0.72) 62%, rgba(8, 15, 26, 0.48) 100%);
   z-index: 0;
 }
 
 .left-panel::after {
   content: '';
   position: absolute;
-  top: -60px; right: -60px;
-  width: 240px; height: 240px;
-  background: radial-gradient(circle, rgba(255,255,255,0.07) 0%, transparent 70%);
+  top: -120px;
+  right: -80px;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(74, 222, 128, 0.16) 0%, transparent 72%);
   border-radius: 50%;
   z-index: 0;
 }
@@ -222,33 +243,34 @@ async function handleLogin() {
 
 .left-headline h1 {
   font-size: 2.6rem;
-  font-weight: 800;
+  font-weight: 600;
   color: #fff;
-  line-height: 1.2;
+  line-height: 1.14;
   margin-bottom: 1rem;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.03em;
 }
 
 .left-headline p {
   font-size: 1.05rem;
-  color: rgba(255,255,255,0.72);
-  line-height: 1.7;
+  font-weight: 300;
+  color: rgba(255,255,255,0.62);
+  line-height: 1.8;
 }
 
 .feature-badge {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  background: rgba(255,255,255,0.1);
-  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(74, 222, 128, 0.28);
   border-radius: 10px;
   padding: 0.85rem 1rem;
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(6px);
 }
 
 .badge-icon {
   width: 30px; height: 30px;
-  background: rgba(255,255,255,0.15);
+  background: rgba(34, 197, 94, 0.18);
   border-radius: 8px;
   display: flex; align-items: center; justify-content: center;
   color: #fff;
@@ -263,17 +285,17 @@ async function handleLogin() {
 
 .badge-sub {
   font-size: 0.72rem;
-  color: rgba(255,255,255,0.6);
+  color: rgba(255,255,255,0.7);
   margin-top: 2px;
 }
 
 /* Illustration */
 .left-illustration {
   margin-top: auto;
-  background: rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.06);
   border-radius: 14px 14px 0 0;
   padding: 1.75rem 1.5rem;
-  border: 1px solid rgba(255,255,255,0.12);
+  border: 1px solid rgba(74, 222, 128, 0.2);
   border-bottom: none;
   position: relative;
   z-index: 1;
@@ -304,7 +326,7 @@ async function handleLogin() {
 /* ====== RIGHT PANEL ====== */
 .right-panel {
   flex: 1;
-  background: #fff;
+  background: linear-gradient(180deg, #ffffff 0%, var(--brand-surface) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -321,16 +343,16 @@ async function handleLogin() {
 
 .right-header h2 {
   font-size: 2.6rem;
-  font-weight: 800;
-  color: #0f172a;
+  font-weight: 600;
+  color: var(--brand-dark-soft);
   margin-bottom: 0.6rem;
   letter-spacing: -0.03em;
 }
 
 .right-header p {
   font-size: 1rem;
-  color: #64748b;
-  font-weight: 400;
+  color: var(--brand-muted);
+  font-weight: 300;
 }
 
 /* FORM */
@@ -348,8 +370,8 @@ async function handleLogin() {
 
 .field-group label {
   font-size: 0.7rem;
-  font-weight: 700;
-  color: #94a3b8;
+  font-weight: 600;
+  color: var(--brand-muted-light);
   letter-spacing: 0.06em;
 }
 
@@ -362,7 +384,7 @@ async function handleLogin() {
 .forgot-link {
   font-size: 0.78rem;
   font-weight: 600;
-  color: #1b4fad;
+  color: var(--brand-green-hover);
   text-decoration: none;
 }
 
@@ -385,7 +407,7 @@ async function handleLogin() {
   width: 100%;
   padding: 0.72rem 2.75rem;
   border: 1.5px solid #e2e8f0;
-  border-radius: 9px;
+  border-radius: 8px;
   font-size: 0.9rem;
   color: #0f172a;
   background: #f8fafc;
@@ -394,9 +416,9 @@ async function handleLogin() {
 }
 
 .input-wrap input:focus {
-  border-color: #1b4fad;
+  border-color: var(--brand-green);
   background: #fff;
-  box-shadow: 0 0 0 3px rgba(27, 79, 173, 0.1);
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.14);
 }
 
 .input-wrap input:disabled {
@@ -424,16 +446,17 @@ async function handleLogin() {
   display: flex;
   align-items: flex-start;
   gap: 0.5rem;
-  background: #f1f5f9;
+  background: #ecfdf5;
+  border: 1px solid #bbf7d0;
   border-radius: 8px;
   padding: 0.75rem 0.9rem;
-  color: #475569;
+  color: #14532d;
   font-size: 0.78rem;
   line-height: 1.5;
 }
 
 .info-note svg { flex-shrink: 0; margin-top: 2px; }
-.info-note strong { color: #0f172a; }
+.info-note strong { color: #166534; }
 
 /* ERROR NOTE */
 .error-note {
@@ -451,12 +474,12 @@ async function handleLogin() {
 /* LOGIN BUTTON */
 .btn-login {
   width: 100%;
-  padding: 0.85rem;
-  background: #1b4fad;
+  padding: 0.9rem 1.2rem;
+  background: var(--brand-green);
   color: #fff;
   border: none;
-  border-radius: 10px;
-  font-size: 0.95rem;
+  border-radius: 6px;
+  font-size: 0.92rem;
   font-weight: 600;
   cursor: pointer;
   transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
@@ -465,12 +488,13 @@ async function handleLogin() {
   justify-content: center;
   min-height: 48px;
   letter-spacing: 0.01em;
-  box-shadow: 0 4px 14px rgba(27, 79, 173, 0.35);
+  box-shadow: 0 6px 16px rgba(34, 197, 94, 0.35);
 }
 
 .btn-login:hover:not(:disabled) {
-  background: #1740a0;
-  box-shadow: 0 6px 18px rgba(27, 79, 173, 0.45);
+  background: var(--brand-green-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(22, 163, 74, 0.45);
 }
 
 .btn-login:active:not(:disabled) { transform: scale(0.99); }
@@ -497,7 +521,11 @@ async function handleLogin() {
 
 .right-footer p {
   font-size: 0.75rem;
-  color: #94a3b8;
+  color: var(--brand-muted-light);
+}
+
+.right-footer p:last-child {
+  color: #64748b;
 }
 
 /* RESPONSIVE */
