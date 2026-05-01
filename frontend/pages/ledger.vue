@@ -1,8 +1,8 @@
 <template>
   <div class="flex-col gap-6">
     <div class="mb-6">
-      <h1 class="text-2xl font-bold">Kartu Stok (Ledger)</h1>
-      <p class="text-muted">Riwayat mutasi keluar masuk barang</p>
+      <h1 class="text-xl font-semibold">Kartu Stok</h1>
+      <p class="text-muted">Riwayat mutasi barang masuk dan keluar</p>
     </div>
 
     <div class="card">
@@ -11,8 +11,8 @@
           <tr>
             <th class="py-2 text-sm text-muted">Arah</th>
             <th class="py-2 text-sm text-muted">Waktu</th>
-            <th class="py-2 text-sm text-muted">Detail Barang Mutasi</th>
-            <th class="py-2 text-sm text-muted text-right">Nilai Mutasi</th>
+            <th class="py-2 text-sm text-muted">Detail Barang</th>
+            <th class="py-2 text-sm text-muted text-right">Nilai</th>
             <th class="py-2 text-sm text-muted">Catatan</th>
           </tr>
         </thead>
@@ -49,6 +49,12 @@
           </tr>
         </tbody>
       </table>
+
+      <div class="flex items-center justify-between mt-4 pt-4" style="border-top: 1px solid var(--border-color)">
+        <button class="btn btn-outline" :disabled="currentPage === 1" @click="loadLedger(currentPage - 1)">Sebelumnya</button>
+        <span class="text-sm text-muted">Halaman {{ currentPage }}</span>
+        <button class="btn btn-outline" :disabled="transactions.length < pageSize" @click="loadLedger(currentPage + 1)">Berikutnya</button>
+      </div>
     </div>
   </div>
 </template>
@@ -64,9 +70,16 @@ definePageMeta({
 });
 
 const transactions = ref([]);
+const currentPage = ref(1);
+const pageSize = 20;
+
+const loadLedger = async (page = 1) => {
+  const data = await fetchLedger({ page, limit: pageSize });
+  currentPage.value = page;
+  transactions.value = data?.data || [];
+};
 
 onMounted(async () => {
-  const data = await fetchLedger();
-  transactions.value = data || [];
+  await loadLedger();
 });
 </script>

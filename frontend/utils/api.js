@@ -1,7 +1,7 @@
 const API_URL = 'http://localhost:8080/api';
 
-export const fetchItems = async () => {
-  const res = await fetch(`${API_URL}/items`);
+export const fetchItems = async ({ page = 1, limit = 20 } = {}) => {
+  const res = await fetch(`${API_URL}/items?page=${page}&limit=${limit}`);
   if (!res.ok) throw new Error('Fetch failed');
   return res.json();
 };
@@ -22,8 +22,8 @@ export const fetchDashboardStats = async () => {
   return res.json();
 };
 
-export const fetchLedger = async () => {
-  const res = await fetch(`${API_URL}/ledger`);
+export const fetchLedger = async ({ page = 1, limit = 20 } = {}) => {
+  const res = await fetch(`${API_URL}/ledger?page=${page}&limit=${limit}`);
   if (!res.ok) throw new Error('Fetch failed');
   return res.json();
 };
