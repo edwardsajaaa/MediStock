@@ -4,8 +4,10 @@ import (
 	"log"
 	"medistock/config"
 	"medistock/routes"
+	"os"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
 func CORSMiddleware() gin.HandlerFunc {
@@ -25,7 +27,14 @@ func CORSMiddleware() gin.HandlerFunc {
 }
 
 func main() {
-	// Koneksi ke DB SQLite (development)
+	if err := godotenv.Load(); err != nil {
+		log.Println("File .env backend tidak ditemukan, memakai environment yang sudah ada")
+	}
+	if os.Getenv("DATABASE_URL") == "" {
+		log.Println("DATABASE_URL belum diisi, backend akan fallback ke SQLite")
+	}
+
+	// Koneksi ke database: Supabase/Postgres jika env tersedia, fallback ke SQLite untuk lokal.
 	config.ConnectDB()
 
 	// Inisialisasi Gin

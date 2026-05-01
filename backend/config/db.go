@@ -1,9 +1,12 @@
 package config
 
 import (
+	"fmt"
 	"log"
 	"medistock/models"
+	"os"
 
+	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -12,15 +15,35 @@ var DB *gorm.DB
 
 func ConnectDB() {
 	var err error
-	
-	// Gunakan SQLite untuk development lokal yang terisolasi.
-	// Mudah dipindah ke Postgres saat production dengan gorm.io/driver/postgres
-	DB, err = gorm.Open(sqlite.Open("medistock.db"), &gorm.Config{})
-	if err != nil {
-		log.Fatalf("Gagal koneksi database: %v", err)
+	dsn := os.Getenv("DATABASE_URL")
+	if dsn == "" {
+		host := os.Getenv("SUPABASE_DB_HOST")
+		port := os.Getenv("SUPABASE_DB_PORT")
+		name := os.Getenv("SUPABASE_DB_NAME")
+		user := os.Getenv("SUPABASE_DB_USER")
+		password := os.Getenv("SUPABASE_DB_PASSWORD")
+
+		if host != "" && port != "" && name != "" && user != "" && password != "" {
+			dsn = fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=require TimeZone=Asia/Jakarta", host, port, user, password, name)
+		}
 	}
 
-	log.Println("Database terkoneksi (SQLite)...")
+	if dsn != "" {
+		DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+		if err != nil {
+			log.Fatalf("Gagal koneksi database Supabase/Postgres: %v", err)
+		}
+
+		log.Println("Database terkoneksi (Supabase/Postgres)...")
+	} else {
+		// Fallback lokal untuk development bila env Supabase belum diisi.
+		DB, err = gorm.Open(sqlite.Open("medistock.db"), &gorm.Config{})
+		if err != nil {
+			log.Fatalf("Gagal koneksi database: %v", err)
+		}
+
+		log.Println("Database terkoneksi (SQLite)...")
+	}
 
 	// Automigrate
 	err = DB.AutoMigrate(
