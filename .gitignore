@@ -1,1 +1,11 @@
-.git_status.txt\nbackend/backend.log\nbackend/medistock\nbackend/medistock.db\nfrontend/frontend.log
+.git_status.txt
+backend/backend.log
+backend/medistock
+backend/medistock.db
+backend/.env
+backend/.env.*
+frontend/frontend.log
+frontend/.env
+frontend/.nuxt/
+frontend/.output/
+frontend/node_modules/
