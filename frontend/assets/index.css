@@ -236,6 +236,12 @@ body {
   border-bottom: 1px solid rgba(226, 232, 240, 0.7);
 }
 
+.table tbody tr {
+  transition: background-color 120ms ease;
+}
+
+.table tbody tr:hover { background-color: rgba(16,24,40,0.02); }
+
 .search-wrap { position: relative; }
 .search-wrap .icon { position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: var(--text-light); }
 .search-input { padding-left: 2.2rem; width: 280px; max-width: 100%; }
