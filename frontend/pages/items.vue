@@ -215,7 +215,7 @@ const handleSubmit = async () => {
   border: 1px solid #e5e7eb;
   border-radius: 0.875rem;
   padding: 1.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .form-panel {
