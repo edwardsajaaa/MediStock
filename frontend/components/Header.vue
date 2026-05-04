@@ -102,6 +102,7 @@ async function handleLogout() {
 
 .search-input::placeholder {
   color: var(--text-light);
+  font-weight: 400;
 }
 
 .header-actions {
