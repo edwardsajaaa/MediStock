@@ -268,7 +268,7 @@ const handleSubmit = async () => {
   gap: 1.25rem;
   padding: 1.5rem;
   border: 1px solid var(--border-color);
-  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.04);
   border-radius: 1rem;
 }
 
