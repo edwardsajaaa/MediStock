@@ -396,7 +396,7 @@ const handleSubmit = async () => {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: #4b5563;
+  color: #374151;
 }
 
 .table thead th.text-right {
