@@ -364,7 +364,7 @@ const handleSubmit = async () => {
   justify-content: center;
   width: 32px;
   height: 32px;
-  border-radius: 0.6rem;
+  border-radius: 0.625rem;
   background: transparent;
   border: 1px solid var(--border-color);
   color: var(--text-muted);
