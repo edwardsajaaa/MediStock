@@ -12,7 +12,10 @@ export const createItem = async (data) => {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   });
-  if (!res.ok) throw new Error('Failed to create item');
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.error || `Gagal membuat item (Status: ${res.status})`);
+  }
   return res.json();
 };
 

@@ -86,6 +86,31 @@ func CreateItem(c *gin.Context) {
 		return
 	}
 
+	// Validasi input
+	if item.Name == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Nama item tidak boleh kosong"})
+		return
+	}
+	if item.Sku == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "SKU tidak boleh kosong"})
+		return
+	}
+	if item.BasePrice <= 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Harga beli harus lebih dari 0"})
+		return
+	}
+	if item.SellPrice <= 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Harga jual harus lebih dari 0"})
+		return
+	}
+
+	// Check SKU duplikat
+	var existingItem models.Item
+	if err := config.DB.Where("sku = ?", item.Sku).First(&existingItem).Error; err == nil {
+		c.JSON(http.StatusConflict, gin.H{"error": "SKU sudah terdaftar. Gunakan SKU yang berbeda"})
+		return
+	}
+
 	if err := config.DB.Create(&item).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal menyimpan item"})
 		return
