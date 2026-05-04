@@ -6,7 +6,6 @@
     </button>
 
     <div class="search-bar">
-      <Search :size="18" class="search-icon" />
       <input 
         type="text" 
         placeholder="Cari data..."
@@ -42,7 +41,7 @@
 </template>
 
 <script setup>
-import { Search, Download, Rocket, Settings, LogOut, PanelLeftClose, PanelLeftOpen } from 'lucide-vue-next';
+import { Download, Rocket, Settings, LogOut, PanelLeftClose, PanelLeftOpen } from 'lucide-vue-next';
 import { useAuthRole } from '@/composables/useAuthRole';
 import { useSidebar } from '@/composables/useSidebar';
 
@@ -69,11 +68,11 @@ async function handleLogout() {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  padding: 0.85rem 1.25rem;
-  background-color: var(--sidebar-bg);
-  border-bottom: 1px solid var(--border-color);
+  padding: 0.78rem 1rem;
+  background-color: transparent;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.45);
   height: 60px;
-  gap: 0.7rem;
+  gap: 0.55rem;
 }
 
 .search-bar {
@@ -81,14 +80,15 @@ async function handleLogout() {
   align-items: center;
   background-color: var(--bg-color);
   border-radius: var(--radius-md);
-  padding: 0.4rem 0.9rem;
-  width: 280px;
+  padding: 0.35rem 0.8rem;
+  width: 260px;
   border: 1px solid var(--border-color);
+  transition: all 0.2s ease;
 }
 
-.search-icon {
-  color: var(--text-muted);
-  margin-right: 0.5rem;
+.search-bar:focus-within {
+  border-color: #10b981;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.1);
 }
 
 .search-input {
@@ -107,13 +107,13 @@ async function handleLogout() {
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 0.65rem;
+  gap: 0.55rem;
   margin-left: auto;
 }
 
 .toggle-btn {
-  border: 1px solid var(--border-color);
-  background: var(--card-bg);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  background: rgba(255, 255, 255, 0.9);
 }
 
 .icon-btn {
@@ -121,8 +121,8 @@ async function handleLogout() {
   border: none;
   color: var(--text-muted);
   cursor: pointer;
-  width: 34px;
-  height: 34px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -141,12 +141,12 @@ async function handleLogout() {
 }
 
 .user-profile {
-  margin-left: 0.35rem;
+  margin-left: 0.25rem;
 }
 
 .avatar {
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   overflow: hidden;
   border: 1px solid white;
