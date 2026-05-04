@@ -292,7 +292,7 @@ const handleSubmit = async () => {
 }
 
 .panel-subtitle {
-  font-size: 0.85rem;
+  font-size: 0.8125rem;
   color: var(--text-muted);
 }
 
