@@ -353,8 +353,8 @@ const handleSubmit = async () => {
 }
 
 .table tbody td {
-  padding: 0.875rem 1rem;
-  font-size: 0.9rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
   color: var(--text-main);
 }
 
