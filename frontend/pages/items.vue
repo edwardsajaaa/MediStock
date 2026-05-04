@@ -462,6 +462,7 @@ const handleSubmit = async () => {
   border-radius: 0.375rem;
   font-size: 0.75rem;
   font-weight: 500;
+  letter-spacing: 0.02em;
 }
 
 .badge-primary {
