@@ -4,12 +4,12 @@
       <div class="flex items-center gap-2">
         <div class="w-3 h-3 rounded-full bg-[#256e5f]"></div>
         <span class="text-muted">Stok Masuk (Nilai)</span>
-        <span class="font-bold text-main">$18,500.00 • 58%</span>
+        <span class="font-bold text-main">{{ formatCurrency(18500) }} • 58%</span>
       </div>
       <div class="flex items-center gap-2">
         <div class="w-3 h-3 rounded-full bg-[#f59e0b]"></div>
         <span class="text-muted">Stok Keluar (Nilai)</span>
-        <span class="font-bold text-main">$13,200.00 • 42%</span>
+        <span class="font-bold text-main">{{ formatCurrency(13200) }} • 42%</span>
       </div>
     </div>
     <ClientOnly>
@@ -20,6 +20,25 @@
 
 <script setup>
 import { ref } from 'vue';
+
+const formatCurrency = (value) =>
+  new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    maximumFractionDigits: 0
+  }).format(value);
+
+const formatCompactCurrency = (value) => {
+  if (value >= 1000000) {
+    const millions = (value / 1000000).toFixed(1).replace(/\.0$/, '');
+    return `Rp${millions} jt`;
+  }
+  if (value >= 1000) {
+    const thousands = (value / 1000).toFixed(0);
+    return `Rp${thousands} rb`;
+  }
+  return `Rp${value}`;
+};
 
 const series = ref([
   { name: 'Stok Masuk', data: [12000, 8000, 10000, 13000, 9000, 14000, 16000, 18500] },
@@ -51,11 +70,11 @@ const chartOptions = ref({
   yaxis: {
     labels: { 
       style: { colors: '#94a3b8', fontSize: '12px' },
-      formatter: (value) => `$${value/1000}K`
+      formatter: (value) => formatCompactCurrency(value)
     }
   },
   tooltip: {
-    y: { formatter: (value) => `$${value}` }
+    y: { formatter: (value) => formatCurrency(value) }
   },
   legend: { show: false }
 });
