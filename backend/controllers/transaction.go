@@ -188,12 +188,54 @@ func GetLedger(c *gin.Context) {
 			limit = parsed
 		}
 	}
+
+	db := config.DB.Model(&models.Transaction{})
+
+	// Filter by type (IN / OUT)
+	if typeFilter := c.Query("type"); typeFilter != "" {
+		db = db.Where("type = ?", typeFilter)
+	}
+
+	// Filter by date range
+	if dateFrom := c.Query("date_from"); dateFrom != "" {
+		if t, err := time.Parse("2006-01-02", dateFrom); err == nil {
+			db = db.Where("date >= ?", t)
+		}
+	}
+	if dateTo := c.Query("date_to"); dateTo != "" {
+		if t, err := time.Parse("2006-01-02", dateTo); err == nil {
+			// Include the entire end date day
+			db = db.Where("date < ?", t.AddDate(0, 0, 1))
+		}
+	}
+
+	// Filter by item_id: find transaction IDs that contain the given item
+	if itemIDStr := c.Query("item_id"); itemIDStr != "" {
+		if itemID, err := strconv.Atoi(itemIDStr); err == nil && itemID > 0 {
+			db = db.Where("id IN (?)", config.DB.Model(&models.TransactionItem{}).Select("transaction_id").Where("item_id = ?", itemID))
+		}
+	}
+
+	// Search by notes
+	if search := c.Query("search"); search != "" {
+		db = db.Where("notes LIKE ?", "%"+search+"%")
+	}
+
+	// Get total count for pagination
+	var totalCount int64
+	db.Count(&totalCount)
+
 	// Preload nested associations
-	if err := config.DB.Preload("Items.Item").Preload("Items.Batch").Order("date DESC").Limit(limit).Offset((page-1)*limit).Find(&trx).Error; err != nil {
+	if err := db.Preload("Items.Item").Preload("Items.Batch").Order("date DESC").Limit(limit).Offset((page-1)*limit).Find(&trx).Error; err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal menarik data histori mutasi"})
 		return
 	}
 
-	c.JSON(http.StatusOK, trx)
+	c.JSON(http.StatusOK, gin.H{
+		"data":  trx,
+		"total": totalCount,
+		"page":  page,
+		"limit": limit,
+	})
 }
