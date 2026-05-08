@@ -107,7 +107,7 @@
           </div>
 
           <form @submit.prevent="handleSubmit" class="panel-form">
-            <div v-if="!isEditMode" class="form-group p-3 bg-gray-50 rounded-lg border border-dashed border-gray-300 mb-6">
+            <div class="form-group p-3 bg-gray-50 rounded-lg border border-dashed border-gray-300 mb-6">
               <label class="form-label font-bold text-primary">Pilih Barang Terdaftar (Opsional)</label>
               <p class="text-xs text-muted mb-2">Pilih jika ingin memperbarui stok/data barang yang sudah ada.</p>
               <select class="input" v-model="selectedExistingId" @change="onSelectExisting">
@@ -311,6 +311,9 @@ const resetForm = () => {
   formData.sell_price = 0;
   formError.value = '';
   formSuccess.value = '';
+  isEditMode.value = false;
+  editingItemId.value = null;
+  selectedExistingId.value = '';
 };
 
 const validateForm = () => {
