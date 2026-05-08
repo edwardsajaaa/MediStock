@@ -186,6 +186,11 @@ const printReceipt = () => {
 }
 
 @media print {
+  @page {
+    size: 80mm auto;
+    margin: 0;
+  }
+  
   body * {
     visibility: hidden;
   }
@@ -194,13 +199,14 @@ const printReceipt = () => {
   }
   .receipt-modal {
     position: absolute;
-    left: 50%;
+    left: 0;
     top: 0;
-    transform: translateX(-50%);
-    width: 300px;
+    transform: none;
+    width: 100%;
     max-width: 100%;
     box-shadow: none;
     margin: 0;
+    padding: 10px; /* Safe area untuk printer margin */
   }
   .hidden-print {
     display: none !important;
