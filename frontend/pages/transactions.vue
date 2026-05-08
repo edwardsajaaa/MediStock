@@ -115,16 +115,29 @@
           <input type="text" class="input" placeholder="Contoh: resep, pembelian supplier, atau permintaan unit" v-model="notes" />
         </div>
 
-        <div class="total-bar">
+        <div v-if="type === 'OUT' && cart.length > 0" class="cashier-section mt-4 pt-4 border-t border-gray-200">
+          <div class="flex justify-between items-center mb-3">
+            <span class="font-medium text-sm text-muted">Uang Pembeli (Rp)</span>
+            <input type="number" class="input text-right" style="width: 150px" placeholder="0" v-model.number="cashReceived" aria-label="Uang Pembeli" />
+          </div>
+          <div class="flex justify-between items-center mb-4">
+            <span class="font-medium text-sm text-muted">Kembalian</span>
+            <span class="text-lg font-bold" :class="changeAmount < 0 ? 'text-danger' : 'text-success'">
+              Rp {{ changeAmount.toLocaleString() }}
+            </span>
+          </div>
+        </div>
+
+        <div class="total-bar" style="margin-top: 0; padding-top: 1rem; border-top: 1px solid var(--border-color);">
           <div>
-            <p class="text-sm text-muted mb-1">Total Nilai</p>
+            <p class="text-sm text-muted mb-1">Total Tagihan</p>
             <h3 class="text-2xl font-bold" :style="{color: type === 'IN' ? 'var(--text-main)' : '#047857'}">
               Rp {{ totalCart.toLocaleString() }}
             </h3>
           </div>
           <button class="submit-btn" 
                   @click="handleSubmit" 
-                  :disabled="cart.length === 0">
+                  :disabled="cart.length === 0 || (type === 'OUT' && changeAmount < 0)">
             Simpan Transaksi
           </button>
         </div>
@@ -185,6 +198,17 @@
               <span class="text-lg font-bold">Rp {{ receiptData?.total?.toLocaleString() }}</span>
             </div>
             
+            <template v-if="receiptData?.type === 'OUT'">
+              <div class="flex justify-between items-center mt-1 mb-1">
+                <span class="text-sm text-muted">Tunai (Uang Pembeli)</span>
+                <span class="text-sm font-medium">Rp {{ receiptData?.cash?.toLocaleString() }}</span>
+              </div>
+              <div class="flex justify-between items-center mb-2">
+                <span class="text-sm text-muted">Kembalian</span>
+                <span class="text-sm font-medium">Rp {{ receiptData?.change?.toLocaleString() }}</span>
+              </div>
+            </template>
+            
             <div v-if="receiptData?.notes" class="mt-4 p-3 bg-gray-50 rounded-lg text-xs">
               <strong>Catatan:</strong> {{ receiptData?.notes }}
             </div>
@@ -224,6 +248,13 @@ const selectedItem = ref('');
 const qty = ref('');
 const batchNum = ref('');
 const expiry = ref('');
+
+const cashReceived = ref('');
+
+const changeAmount = computed(() => {
+  const cash = parseFloat(cashReceived.value) || 0;
+  return cash - totalCart.value;
+});
 
 onMounted(async () => {
   const data = await fetchItems();
@@ -280,6 +311,8 @@ const handleSubmit = async () => {
       date: new Date().toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' }),
       items: [...cart.value],
       total: totalAmount,
+      cash: type.value === 'OUT' ? (parseFloat(cashReceived.value) || 0) : 0,
+      change: type.value === 'OUT' ? changeAmount.value : 0,
       notes: notes.value
     };
     
@@ -288,6 +321,7 @@ const handleSubmit = async () => {
     // Bersihkan form
     cart.value = [];
     notes.value = '';
+    cashReceived.value = '';
     
     // PENTING: Refresh data master agar stok terbaru langsung tampil!
     const data = await fetchItems();
