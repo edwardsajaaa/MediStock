@@ -22,17 +22,17 @@
       <table class="table" role="table" aria-label="Daftar barang">
         <thead>
           <tr>
-            <th>SKU</th>
+            <th class="col-sku">SKU</th>
             <th>Nama</th>
-            <th>Kategori</th>
+            <th class="col-category">Kategori</th>
             <th class="text-right">Stok</th>
-            <th class="text-right">Harga Jual</th>
+            <th class="text-right col-price">Harga Jual</th>
             <th class="text-center" style="width: 60px">Aksi</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="item in filteredItems" :key="item.id">
-            <td class="font-medium">{{ item.sku }}</td>
+            <td class="font-medium col-sku">{{ item.sku }}</td>
             <td>
               <div class="flex items-center gap-2">
                 <div style="background: var(--bg-color); padding: 0.35rem; border-radius: 6px">
@@ -41,7 +41,7 @@
                 <span class="font-semibold">{{ item.name }}</span>
               </div>
             </td>
-            <td>
+            <td class="col-category">
               <span
                 class="badge"
                 :class="item.category === 'Alkes' ? 'badge-primary' : (item.category === 'Obat Resep' ? 'badge-danger' : 'badge-success')"
@@ -52,7 +52,7 @@
             <td class="text-right">
               <span class="font-semibold" :class="item.total_stock === 0 ? 'text-danger' : ''">{{ item.total_stock }}</span>
             </td>
-            <td class="text-right font-medium text-primary">Rp {{ item.sell_price?.toLocaleString() }}</td>
+            <td class="text-right font-medium text-primary col-price">Rp {{ item.sell_price?.toLocaleString() }}</td>
             <td class="text-center">
               <button
                 class="btn-edit"
@@ -605,13 +605,18 @@ const handleSubmit = async () => {
 }
 
 /* ── Responsive ── */
-@media (max-width: 500px) {
+@media (max-width: 768px) {
   .side-panel {
     width: 100vw;
   }
 
   .form-row {
     grid-template-columns: 1fr;
+  }
+
+  .col-sku,
+  .col-price {
+    display: none;
   }
 }
 </style>
