@@ -117,6 +117,20 @@ body {
 .grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
 .grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
 
+@media (max-width: 768px) {
+  .grid-cols-4 { grid-template-columns: repeat(2, 1fr); }
+  .grid-cols-2 { grid-template-columns: 1fr; }
+  .grid-cols-3 { grid-template-columns: 1fr; }
+  .p-6 { padding: 1rem; }
+  .gap-6 { gap: 1rem; }
+  .mb-6 { margin-bottom: 1rem; }
+}
+
+@media (max-width: 480px) {
+  .grid-cols-4 { grid-template-columns: 1fr; }
+  .p-6 { padding: 0.75rem; }
+}
+
 /* Spacing */
 .p-4 { padding: 1rem; }
 .p-6 { padding: 1.5rem; }
@@ -217,6 +231,12 @@ body {
 }
 
 /* Table styles for cleaner, minimal lists */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 .table {
   width: 100%;
   border-collapse: collapse;
@@ -229,6 +249,7 @@ body {
   color: var(--text-muted);
   font-weight: 600;
   border-bottom: 1px solid var(--border-color);
+  white-space: nowrap;
 }
 
 .table tbody td {
@@ -245,6 +266,13 @@ body {
 .search-wrap { position: relative; }
 .search-wrap .icon { position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
 .search-input { padding-left: 2.2rem; width: 280px; max-width: 100%; }
+
+@media (max-width: 768px) {
+  .search-input { width: 100%; }
+  .table { font-size: 0.85rem; }
+  .table thead th { padding: 0.5rem 0.5rem; font-size: 0.75rem; }
+  .table tbody td { padding: 0.5rem 0.5rem; }
+}
 
 .page-title { font-size: 1.0625rem; font-weight: 600; }
 

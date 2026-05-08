@@ -159,4 +159,30 @@ async function handleLogout() {
   height: 100%;
   object-fit: cover;
 }
+
+@media (max-width: 768px) {
+  .search-bar {
+    display: none;
+  }
+
+  .header {
+    padding: 0.6rem 0.75rem;
+    height: 52px;
+  }
+
+  .header-actions .icon-btn:not(.logout-btn) {
+    display: none;
+  }
+
+  .user-profile > div:first-child {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    padding: 0.5rem 0.6rem;
+    height: 48px;
+  }
+}
 </style>
