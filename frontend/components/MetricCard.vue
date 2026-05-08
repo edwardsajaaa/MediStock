@@ -85,4 +85,34 @@ defineProps({
   font-size: 0.75rem;
   color: var(--text-light);
 }
+
+@media (max-width: 768px) {
+  .metric-card {
+    padding: 0.85rem 0.9rem;
+    border-radius: 10px;
+  }
+
+  .metric-title {
+    font-size: 0.75rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .metric-value {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .metric-footer {
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+
+  .metric-change {
+    font-size: 0.65rem;
+  }
+
+  .metric-comparison {
+    font-size: 0.65rem;
+  }
+}
 </style>
