@@ -107,6 +107,17 @@
           </div>
 
           <form @submit.prevent="handleSubmit" class="panel-form">
+            <div v-if="!isEditMode" class="form-group p-3 bg-gray-50 rounded-lg border border-dashed border-gray-300 mb-6">
+              <label class="form-label font-bold text-primary">Pilih Barang Terdaftar (Opsional)</label>
+              <p class="text-xs text-muted mb-2">Pilih jika ingin memperbarui stok/data barang yang sudah ada.</p>
+              <select class="input" v-model="selectedExistingId" @change="onSelectExisting">
+                <option value="">-- Barang Baru (Belum Terdaftar) --</option>
+                <option v-for="item in items" :key="item.id" :value="item.id">
+                  {{ item.name }} ({{ item.sku }})
+                </option>
+              </select>
+            </div>
+
             <div class="form-group">
               <label class="form-label">SKU / Kode Unik <span class="text-danger">*</span></label>
               <input
@@ -232,6 +243,7 @@ const formSuccess = ref('');
 const searchQuery = ref('');
 const isEditMode = ref(false);
 const editingItemId = ref(null);
+const selectedExistingId = ref('');
 
 const formData = reactive({
   name: '', category: 'Obat Bebas', sku: '', min_stock: 0, base_price: 0, sell_price: 0
@@ -250,6 +262,7 @@ const filteredItems = computed(() => {
 const openPanel = () => {
   isEditMode.value = false;
   editingItemId.value = null;
+  selectedExistingId.value = '';
   resetForm();
   showPanel.value = true;
   document.body.style.overflow = 'hidden';
@@ -258,6 +271,7 @@ const openPanel = () => {
 const openEditPanel = (item) => {
   isEditMode.value = true;
   editingItemId.value = item.id;
+  selectedExistingId.value = item.id;
   formData.name = item.name;
   formData.category = item.category;
   formData.sku = item.sku;
@@ -268,6 +282,19 @@ const openEditPanel = (item) => {
   formSuccess.value = '';
   showPanel.value = true;
   document.body.style.overflow = 'hidden';
+};
+
+const onSelectExisting = () => {
+  if (!selectedExistingId.value) {
+    const wasEdit = isEditMode.value;
+    resetForm();
+    if (wasEdit) isEditMode.value = false;
+    return;
+  }
+  const item = items.value.find(i => i.id === parseInt(selectedExistingId.value));
+  if (item) {
+    openEditPanel(item);
+  }
 };
 
 const closePanel = () => {
