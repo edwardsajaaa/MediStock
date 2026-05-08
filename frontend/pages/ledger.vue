@@ -135,6 +135,7 @@
             <th style="padding-right: 1rem">Detail Barang</th>
             <th class="text-right" style="width: 140px; padding-right: 1.5rem">Nilai</th>
             <th style="width: 180px">Catatan</th>
+            <th style="width: 100px" class="text-center">Aksi</th>
           </tr>
         </thead>
         <tbody>
@@ -188,6 +189,9 @@
             </td>
             <td class="py-4">
               <span class="text-sm text-muted ledger-notes">{{ trx.notes || '-' }}</span>
+            </td>
+            <td class="py-4 text-center">
+              <button class="btn btn-outline" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;" @click="viewReceipt(trx)">Lihat Struk</button>
             </td>
           </tr>
           <tr v-if="transactions.length === 0 && !isLoading">
@@ -243,6 +247,13 @@
         </div>
       </div>
     </div>
+
+    <!-- Receipt / Struk Modal -->
+    <ReceiptModal 
+      :show="showReceipt" 
+      :data="receiptData" 
+      @close="closeReceipt" 
+    />
   </div>
 </template>
 
@@ -265,6 +276,7 @@ import {
   ChevronRight,
   Hash,
 } from 'lucide-vue-next';
+import ReceiptModal from '@/components/ReceiptModal.vue';
 
 definePageMeta({
   middleware: 'auth',
@@ -291,6 +303,33 @@ let debounceTimer = null;
 const debouncedLoad = () => {
   clearTimeout(debounceTimer);
   debounceTimer = setTimeout(() => loadLedger(1), 400);
+};
+
+// Receipt logic
+const showReceipt = ref(false);
+const receiptData = ref(null);
+
+const viewReceipt = (trx) => {
+  receiptData.value = {
+    transaction_id: trx.id,
+    type: trx.type,
+    date: formatDate(trx.date) + ' ' + formatTime(trx.date),
+    items: trx.items.map(i => ({
+      name: i.item?.name || 'Unknown',
+      qty: i.qty,
+      price: i.price
+    })),
+    total: trx.total_amount,
+    cash: trx.cash || 0,
+    change: trx.change || 0,
+    notes: trx.notes
+  };
+  showReceipt.value = true;
+};
+
+const closeReceipt = () => {
+  showReceipt.value = false;
+  receiptData.value = null;
 };
 
 const hasActiveFilter = computed(() => {

@@ -40,6 +40,8 @@ type Transaction struct {
 	Type        string         `gorm:"not null" json:"type"` // "IN" atau "OUT"
 	Date        time.Time      `gorm:"not null;index" json:"date"`
 	TotalAmount float64        `json:"total_amount"`
+	Cash        float64        `json:"cash"`
+	Change      float64        `json:"change"`
 	Notes       string         `json:"notes"`
 	CreatedAt   time.Time      `gorm:"index" json:"created_at"`
 	UpdatedAt   time.Time      `json:"updated_at"`

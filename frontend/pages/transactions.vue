@@ -136,87 +136,19 @@
     </div>
 
     <!-- Receipt / Struk Modal -->
-    <Teleport to="body">
-      <div v-if="showReceipt" class="modal-backdrop" @click="closeReceipt">
-        <div class="modal-content receipt-modal" @click.stop>
-          <div class="receipt-header">
-            <h2 class="text-xl font-bold text-center mb-1">MediStock</h2>
-            <p class="text-center text-sm text-muted mb-4">Bukti Transaksi Barang</p>
-            
-            <div class="receipt-meta">
-              <div class="flex justify-between mb-1">
-                <span class="text-xs text-muted">ID Transaksi</span>
-                <span class="text-xs font-semibold">#TRX-{{ receiptData?.transaction_id }}</span>
-              </div>
-              <div class="flex justify-between mb-1">
-                <span class="text-xs text-muted">Tanggal</span>
-                <span class="text-xs font-semibold">{{ receiptData?.date }}</span>
-              </div>
-              <div class="flex justify-between mb-1">
-                <span class="text-xs text-muted">Jenis</span>
-                <span class="text-xs font-bold text-danger">BARANG KELUAR</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="receipt-body my-4">
-            <div class="receipt-divider"></div>
-            <table class="receipt-table w-full text-sm">
-              <thead>
-                <tr>
-                  <th class="text-left pb-2 text-xs text-muted">Item</th>
-                  <th class="text-center pb-2 text-xs text-muted">Qty</th>
-                  <th class="text-right pb-2 text-xs text-muted">Total</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(item, idx) in receiptData?.items" :key="idx">
-                  <td class="py-2">
-                    <div class="font-medium">{{ item.name }}</div>
-                    <div class="text-xs text-muted">Rp {{ item.price.toLocaleString() }}</div>
-                  </td>
-                  <td class="text-center py-2">{{ item.qty }}</td>
-                  <td class="text-right py-2">Rp {{ (item.qty * item.price).toLocaleString() }}</td>
-                </tr>
-              </tbody>
-            </table>
-            <div class="receipt-divider"></div>
-            
-            <div class="flex justify-between items-center mt-3 mb-2">
-              <span class="font-semibold">Total Nilai</span>
-              <span class="text-lg font-bold">Rp {{ receiptData?.total?.toLocaleString() }}</span>
-            </div>
-            
-            <div class="flex justify-between items-center mt-1 mb-1">
-              <span class="text-sm text-muted">Tunai (Uang Pembeli)</span>
-              <span class="text-sm font-medium">Rp {{ receiptData?.cash?.toLocaleString() }}</span>
-            </div>
-            <div class="flex justify-between items-center mb-2">
-              <span class="text-sm text-muted">Kembalian</span>
-              <span class="text-sm font-medium">Rp {{ receiptData?.change?.toLocaleString() }}</span>
-            </div>
-            
-            <div v-if="receiptData?.notes" class="mt-4 p-3 bg-gray-50 rounded-lg text-xs">
-              <strong>Catatan:</strong> {{ receiptData?.notes }}
-            </div>
-          </div>
-
-          <div class="receipt-actions flex gap-3 mt-6">
-            <button class="btn btn-outline flex-1" @click="closeReceipt">Tutup</button>
-            <button class="btn btn-primary flex-1 flex items-center justify-center gap-2" @click="printReceipt">
-              <Printer size="16" /> Cetak
-            </button>
-          </div>
-        </div>
-      </div>
-    </Teleport>
+    <ReceiptModal 
+      :show="showReceipt" 
+      :data="receiptData" 
+      @close="closeReceipt" 
+    />
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { fetchItems, createTransaction } from '@/utils/api';
-import { ArrowDownRight, ArrowUpRight, Plus, Trash2, Printer } from 'lucide-vue-next';
+import { ArrowUpRight, Plus, Trash2 } from 'lucide-vue-next';
+import ReceiptModal from '@/components/ReceiptModal.vue';
 
 definePageMeta({
   middleware: 'auth',
@@ -313,10 +245,6 @@ const handleSubmit = async () => {
 const closeReceipt = () => {
   showReceipt.value = false;
   receiptData.value = null;
-};
-
-const printReceipt = () => {
-  window.print();
 };
 </script>
 
@@ -577,77 +505,4 @@ const printReceipt = () => {
   }
 }
 
-/* ── Modal & Receipt Styles ── */
-.modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.4);
-  backdrop-filter: blur(4px);
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
-  animation: fadeIn 0.2s ease;
-}
-
-.modal-content {
-  background: white;
-  border-radius: 1rem;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-  padding: 2rem;
-  width: 100%;
-  max-width: 400px;
-  animation: scaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.receipt-modal {
-  position: relative;
-}
-
-.receipt-divider {
-  height: 1px;
-  background: var(--border-color);
-  margin: 1rem 0;
-  border-top: 1px dashed #cbd5e1;
-}
-
-.receipt-table th {
-  border-bottom: 1px solid var(--border-color);
-}
-
-.receipt-table td {
-  vertical-align: top;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes scaleUp {
-  from { transform: scale(0.95); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
-}
-
-@media print {
-  body * {
-    visibility: hidden;
-  }
-  .receipt-modal, .receipt-modal * {
-    visibility: visible;
-  }
-  .receipt-modal {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    max-width: 100%;
-    padding: 0;
-    box-shadow: none;
-  }
-  .receipt-actions {
-    display: none !important;
-  }
-}
 </style>

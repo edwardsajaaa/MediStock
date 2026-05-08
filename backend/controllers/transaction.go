@@ -12,9 +12,11 @@ import (
 )
 
 type TransactionRequest struct {
-	Type        string `json:"type"` // "IN" atau "OUT"
-	TotalAmount float64 `json:"total_amount"`
-	Notes       string `json:"notes"`
+	Type        string               `json:"type"` // "IN" atau "OUT"
+	TotalAmount float64              `json:"total_amount"`
+	Cash        float64              `json:"cash"`
+	Change      float64              `json:"change"`
+	Notes       string               `json:"notes"`
 	Items       []TransactionItemReq `json:"items"`
 }
 
@@ -40,6 +42,8 @@ func CreateTransaction(c *gin.Context) {
 		Type:        req.Type,
 		Date:        time.Now(),
 		TotalAmount: req.TotalAmount,
+		Cash:        req.Cash,
+		Change:      req.Change,
 		Notes:       req.Notes,
 	}
 
