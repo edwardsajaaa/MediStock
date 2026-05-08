@@ -422,7 +422,7 @@ const handleSubmit = async () => {
   }
 }
 
-@media (max-width: 720px) {
+@media (max-width: 768px) {
   .transactions-header {
     flex-direction: column;
     align-items: flex-start;
@@ -430,12 +430,39 @@ const handleSubmit = async () => {
 
   .type-toggle {
     width: 100%;
-    justify-content: space-between;
+  }
+
+  .type-toggle .btn {
+    flex: 1;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem;
   }
 
   .total-bar {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .submit-btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  .panel {
+    padding: 1rem;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .table thead th,
+  .table tbody td {
+    padding: 0.5rem 0.6rem;
+    font-size: 0.8rem;
+    white-space: nowrap;
   }
 }
 </style>
