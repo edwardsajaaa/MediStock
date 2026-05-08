@@ -740,9 +740,13 @@ onMounted(async () => {
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .filters-grid {
     grid-template-columns: 1fr;
+  }
+
+  .ledger-filters {
+    padding: 0.75rem;
   }
 
   .ledger-pagination {
@@ -766,12 +770,45 @@ onMounted(async () => {
     width: 100%;
   }
 
+  .type-btn {
+    flex: 1;
+  }
+
   .date-range {
     flex-direction: column;
   }
 
   .date-separator {
     display: none;
+  }
+
+  /* Tabel responsive: overflow horizontal */
+  .card:has(.table) {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .table thead th,
+  .table tbody td {
+    white-space: nowrap;
+    font-size: 0.8rem;
+    padding: 0.5rem 0.6rem !important;
+  }
+
+  /* Sembunyikan kolom Waktu dan Catatan di mobile */
+  .table thead th:nth-child(2),
+  .table tbody td:nth-child(2),
+  .table thead th:nth-child(5),
+  .table tbody td:nth-child(5) {
+    display: none;
+  }
+
+  .ledger-amount {
+    font-size: 0.8rem;
+  }
+
+  .ledger-notes {
+    max-width: 120px;
   }
 }
 </style>
