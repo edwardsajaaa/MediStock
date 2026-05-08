@@ -51,29 +51,29 @@
           <h2 class="text-base font-semibold mb-3 flex items-center gap-2 text-danger">
             <AlertCircle :size="18" /> Peringatan Stok Rendah
           </h2>
-          <ul v-if="stats && stats.alerts.low_stock.length > 0" style="list-style: none;">
-            <li v-for="(al, idx) in stats.alerts.low_stock" :key="idx" class="flex justify-between items-center py-2 border-b border-red-100" style="border-color: #fee2e2;">
-              <span class="font-semibold text-gray-800">{{ al.item_name }}</span>
-              <span class="badge badge-danger">Sisa {{ al.current_qty }} / Min {{ al.min_stock }}</span>
+          <ul v-if="stats && stats.alerts.low_stock.length > 0" class="alerts-list">
+            <li v-for="(al, idx) in stats.alerts.low_stock" :key="idx" class="alert-item" style="border-color: #fee2e2;">
+              <span class="font-semibold text-gray-800 text-sm alert-item-name" :title="al.item_name">{{ al.item_name }}</span>
+              <span class="badge badge-danger alert-badge">Sisa {{ al.current_qty }} / Min {{ al.min_stock }}</span>
             </li>
           </ul>
-          <p v-else class="text-sm text-gray-500 italic">Semua stok masih aman.</p>
+          <p v-else class="text-sm text-gray-500 italic mt-2">Semua stok masih aman.</p>
         </div>
 
         <div class="card shadow-md border-0 ring-1 ring-warning-100" style="background: linear-gradient(to bottom right, #fff, #fffbeb);">
           <h2 class="text-base font-semibold mb-3 flex items-center gap-2" style="color: #d97706;">
             <AlertTriangle :size="18" /> Peringatan Kedaluwarsa
           </h2>
-          <ul v-if="stats && stats.alerts.expiring.length > 0" style="list-style: none;">
-            <li v-for="(al, idx) in stats.alerts.expiring" :key="idx" class="flex justify-between items-center py-2 border-b" style="border-color: #fef3c7;">
-              <div>
-                <div class="font-semibold text-gray-800">{{ al.item_name }}</div>
-                <div class="text-xs text-muted">Batch {{ al.batch_number }} · Qty {{ al.quantity }}</div>
+          <ul v-if="stats && stats.alerts.expiring.length > 0" class="alerts-list">
+            <li v-for="(al, idx) in stats.alerts.expiring" :key="idx" class="alert-item" style="border-color: #fef3c7;">
+              <div class="alert-item-info">
+                <div class="font-semibold text-gray-800 text-sm alert-item-name" :title="al.item_name">{{ al.item_name }}</div>
+                <div class="text-xs text-muted mt-1">Batch {{ al.batch_number }} · Qty {{ al.quantity }}</div>
               </div>
-              <span class="text-sm font-semibold" style="color: #d97706;">{{ al.expiry_date }}</span>
+              <span class="text-sm font-semibold alert-badge" style="color: #d97706;">{{ al.expiry_date }}</span>
             </li>
           </ul>
-          <p v-else class="text-sm text-gray-500 italic">Belum ada barang yang mendekati kedaluwarsa.</p>
+          <p v-else class="text-sm text-gray-500 italic mt-2">Belum ada barang yang mendekati kedaluwarsa.</p>
         </div>
       </div>
 
@@ -139,6 +139,57 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.alerts-list {
+  list-style: none;
+  max-height: 240px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+/* Custom scrollbar for alerts list */
+.alerts-list::-webkit-scrollbar {
+  width: 4px;
+}
+.alerts-list::-webkit-scrollbar-track {
+  background: rgba(0,0,0,0.02);
+  border-radius: 4px;
+}
+.alerts-list::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.1);
+  border-radius: 4px;
+}
+
+.alert-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid;
+  gap: 0.75rem;
+}
+
+.alert-item:last-child {
+  border-bottom: none;
+}
+
+.alert-item-name {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.alert-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.alert-badge {
+  flex-shrink: 0;
+}
+
 .kpi-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
