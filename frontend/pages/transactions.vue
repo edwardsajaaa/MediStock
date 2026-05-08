@@ -2,22 +2,8 @@
   <div class="transactions-page">
     <div class="transactions-header">
       <div>
-        <h1 class="page-title">Transaksi</h1>
-        <p class="text-sm text-muted">Pencatatan barang masuk dan keluar</p>
-      </div>
-      <div class="type-toggle">
-        <button
-          class="btn"
-          :class="type === 'IN' ? 'btn-primary' : 'btn-outline'"
-          @click="type = 'IN'; cart = [];">
-          Barang Masuk
-        </button>
-        <button
-          class="btn"
-          :class="type === 'OUT' ? 'btn-primary' : 'btn-outline'"
-          @click="type = 'OUT'; cart = [];">
-          Barang Keluar
-        </button>
+        <h1 class="page-title">Transaksi Kasir</h1>
+        <p class="text-sm text-muted">Pencatatan penjualan dan barang keluar</p>
       </div>
     </div>
 
@@ -26,9 +12,8 @@
       <section class="card panel">
         <div class="panel-header">
           <h2 class="panel-title">
-            <ArrowDownRight v-if="type === 'IN'" class="text-primary"/>
-            <ArrowUpRight v-else class="text-danger" />
-            {{ type === 'IN' ? 'Form Barang Masuk' : 'Form Barang Keluar' }}
+            <ArrowUpRight class="text-danger" />
+            Form Barang Keluar
           </h2>
           <p class="panel-subtitle">Isi data barang sebelum ditambahkan ke daftar transaksi.</p>
         </div>
@@ -39,7 +24,7 @@
             <select aria-label="Pilih Barang" class="input" v-model="selectedItem">
               <option value="">-- Pilih Barang --</option>
               <option v-for="item in items" :key="item.id" :value="item.id">
-                {{ item.name }} - {{ item.sku }} {{ type === 'OUT' ? `(Stok: ${item.total_stock})` : '' }}
+                {{ item.name }} - {{ item.sku }} (Stok: {{ item.total_stock }})
               </option>
             </select>
           </div>
@@ -49,16 +34,6 @@
             <input type="number" class="input" v-model="qty" />
           </div>
 
-          <template v-if="type === 'IN'">
-            <div class="form-field">
-              <label class="text-sm font-medium mb-1 block">Nomor Batch</label>
-              <input type="text" class="input" placeholder="Wajib diisi" v-model="batchNum" />
-            </div>
-            <div class="form-field">
-              <label class="text-sm font-medium mb-1 block">Tanggal Kedaluwarsa</label>
-              <input type="date" class="input" placeholder="YYYY-MM-DD" v-model="expiry" />
-            </div>
-          </template>
 
           <button class="btn btn-outline w-full flex items-center justify-center gap-2" @click="addToCart">
             <Plus size="16"/> Tambahkan
@@ -69,8 +44,8 @@
       <!-- Cart Panel -->
       <section class="card panel panel-wide">
         <div class="panel-header">
-          <h2 class="panel-title">Daftar Transaksi {{ type === 'OUT' ? '(Keluar)' : '(Masuk)' }}</h2>
-          <p class="panel-subtitle">Periksa detail item, batch, dan subtotal sebelum menyimpan.</p>
+          <h2 class="panel-title">Daftar Transaksi (Keluar)</h2>
+          <p class="panel-subtitle">Periksa detail item, qty, dan subtotal sebelum menyimpan.</p>
         </div>
 
         <div class="table-wrap">
@@ -78,8 +53,7 @@
             <thead>
               <tr>
                 <th>Item</th>
-                <th>Qty</th>
-                <th v-if="type === 'IN'">Batch & Kedaluwarsa</th>
+                <th class="text-center">Qty</th>
                 <th class="text-right">Harga</th>
                 <th class="text-right">Subtotal</th>
                 <th></th>
@@ -89,10 +63,6 @@
               <tr v-for="(c, idx) in cart" :key="idx">
                 <td class="font-medium">{{ c.name }}</td>
                 <td class="text-center">{{ c.qty }}</td>
-                <td v-if="type === 'IN'" class="text-sm text-muted">
-                  <div>{{ c.batch_number }}</div>
-                  <div class="text-xs">{{ c.expiry_date }}</div>
-                </td>
                 <td class="text-right">Rp {{ c.price.toLocaleString() }}</td>
                 <td class="text-right font-medium text-primary">Rp {{ (c.qty * c.price).toLocaleString() }}</td>
                 <td class="text-right">
@@ -102,7 +72,7 @@
                 </td>
               </tr>
               <tr v-if="cart.length === 0">
-                <td :colspan="type === 'IN' ? 6 : 5" class="py-8 text-center text-muted">
+                <td colspan="5" class="py-8 text-center text-muted">
                   Belum ada item di daftar
                 </td>
               </tr>
@@ -115,7 +85,7 @@
           <input type="text" class="input" placeholder="Contoh: resep, pembelian supplier, atau permintaan unit" v-model="notes" />
         </div>
 
-        <div v-if="type === 'OUT' && cart.length > 0" class="cashier-section mt-4 pt-4 border-t border-gray-200">
+        <div v-if="cart.length > 0" class="cashier-section mt-4 pt-4 border-t border-gray-200">
           <div class="flex justify-between items-center mb-3">
             <span class="font-medium text-sm text-muted">Uang Pembeli (Rp)</span>
             <input type="number" class="input text-right" style="width: 150px" placeholder="0" v-model.number="cashReceived" aria-label="Uang Pembeli" />
@@ -131,13 +101,13 @@
         <div class="total-bar" style="margin-top: 0; padding-top: 1rem; border-top: 1px solid var(--border-color);">
           <div>
             <p class="text-sm text-muted mb-1">Total Tagihan</p>
-            <h3 class="text-2xl font-bold" :style="{color: type === 'IN' ? 'var(--text-main)' : '#047857'}">
+            <h3 class="text-2xl font-bold" style="color: #047857">
               Rp {{ totalCart.toLocaleString() }}
             </h3>
           </div>
           <button class="submit-btn" 
                   @click="handleSubmit" 
-                  :disabled="cart.length === 0 || (type === 'OUT' && changeAmount < 0)">
+                  :disabled="cart.length === 0 || changeAmount < 0">
             Simpan Transaksi
           </button>
         </div>
@@ -163,9 +133,7 @@
               </div>
               <div class="flex justify-between mb-1">
                 <span class="text-xs text-muted">Jenis</span>
-                <span class="text-xs font-bold" :class="receiptData?.type === 'IN' ? 'text-primary' : 'text-danger'">
-                  {{ receiptData?.type === 'IN' ? 'BARANG MASUK' : 'BARANG KELUAR' }}
-                </span>
+                <span class="text-xs font-bold text-danger">BARANG KELUAR</span>
               </div>
             </div>
           </div>
@@ -198,16 +166,14 @@
               <span class="text-lg font-bold">Rp {{ receiptData?.total?.toLocaleString() }}</span>
             </div>
             
-            <template v-if="receiptData?.type === 'OUT'">
-              <div class="flex justify-between items-center mt-1 mb-1">
-                <span class="text-sm text-muted">Tunai (Uang Pembeli)</span>
-                <span class="text-sm font-medium">Rp {{ receiptData?.cash?.toLocaleString() }}</span>
-              </div>
-              <div class="flex justify-between items-center mb-2">
-                <span class="text-sm text-muted">Kembalian</span>
-                <span class="text-sm font-medium">Rp {{ receiptData?.change?.toLocaleString() }}</span>
-              </div>
-            </template>
+            <div class="flex justify-between items-center mt-1 mb-1">
+              <span class="text-sm text-muted">Tunai (Uang Pembeli)</span>
+              <span class="text-sm font-medium">Rp {{ receiptData?.cash?.toLocaleString() }}</span>
+            </div>
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-sm text-muted">Kembalian</span>
+              <span class="text-sm font-medium">Rp {{ receiptData?.change?.toLocaleString() }}</span>
+            </div>
             
             <div v-if="receiptData?.notes" class="mt-4 p-3 bg-gray-50 rounded-lg text-xs">
               <strong>Catatan:</strong> {{ receiptData?.notes }}
@@ -237,7 +203,6 @@ definePageMeta({
 });
 
 const items = ref([]);
-const type = ref('OUT');
 const notes = ref('');
 const cart = ref([]);
 
@@ -246,8 +211,6 @@ const receiptData = ref(null);
 
 const selectedItem = ref('');
 const qty = ref('');
-const batchNum = ref('');
-const expiry = ref('');
 
 const cashReceived = ref('');
 
@@ -265,21 +228,15 @@ const addToCart = () => {
   if (!selectedItem.value || !qty.value) return;
   const item = items.value.find(i => i.id === parseInt(selectedItem.value));
   
-  const price = type.value === 'OUT' ? item.sell_price : item.base_price;
-  
   cart.value.push({
     item_id: item.id,
     name: item.name,
     qty: parseInt(qty.value),
-    price: price,
-    batch_number: batchNum.value,
-    expiry_date: expiry.value
+    price: item.sell_price
   });
   
   selectedItem.value = '';
   qty.value = '';
-  batchNum.value = '';
-  expiry.value = '';
 };
 
 const removeFromCart = (index) => {
@@ -298,7 +255,7 @@ const handleSubmit = async () => {
 
   try {
     const res = await createTransaction({
-      type: type.value,
+      type: 'OUT',
       total_amount: totalAmount,
       notes: notes.value,
       items: cart.value,
@@ -307,12 +264,12 @@ const handleSubmit = async () => {
     // Siapkan data untuk struk
     receiptData.value = {
       transaction_id: res.transaction_id || Math.floor(Math.random() * 10000),
-      type: type.value,
+      type: 'OUT',
       date: new Date().toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' }),
       items: [...cart.value],
       total: totalAmount,
-      cash: type.value === 'OUT' ? (parseFloat(cashReceived.value) || 0) : 0,
-      change: type.value === 'OUT' ? changeAmount.value : 0,
+      cash: parseFloat(cashReceived.value) || 0,
+      change: changeAmount.value,
       notes: notes.value
     };
     
