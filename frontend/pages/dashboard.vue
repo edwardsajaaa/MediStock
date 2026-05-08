@@ -12,7 +12,7 @@
     </div>
     
     <div class="dashboard-content mt-6">
-      <div class="kpi-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem;">
+      <div class="kpi-grid">
         <MetricCard 
           title="Total Item" 
           :value="stats ? stats.metrics.total_items : '...'" 
@@ -139,15 +139,24 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
 .dashboard-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
+  flex-wrap: wrap;
 }
 .header-actions {
   display: flex;
   gap: 0.6rem;
+  flex-wrap: wrap;
 }
 .charts-grid-top, .charts-grid-bottom {
   display: grid;
@@ -162,5 +171,33 @@ onMounted(() => {
 @keyframes spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
+}
+
+@media (max-width: 768px) {
+  .kpi-grid {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .header-actions {
+    width: 100%;
+  }
+
+  .header-actions .btn {
+    flex: 1;
+    font-size: 0.8rem;
+    padding: 0.4rem 0.6rem;
+  }
+
+  .charts-grid-top, .charts-grid-bottom {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
 }
 </style>
