@@ -53,7 +53,16 @@
               <span class="font-semibold" :class="item.total_stock === 0 ? 'text-danger' : ''">{{ item.total_stock }}</span>
             </td>
             <td class="text-right font-medium text-primary col-price">Rp {{ item.sell_price?.toLocaleString() }}</td>
-            <td class="text-center">
+            <td class="text-center flex justify-center gap-2">
+              <button
+                class="btn-edit"
+                style="color: #047857; background-color: #d1fae5;"
+                @click="openStockModal(item)"
+                :title="'Tambah Stok ' + item.name"
+                aria-label="Tambah stok"
+              >
+                <PackagePlus size="15" />
+              </button>
               <button
                 class="btn-edit"
                 @click="openEditPanel(item)"
@@ -77,10 +86,63 @@
       </div>
     </div>
 
-    <!-- Backdrop overlay -->
+    <!-- Backdrop overlay for Edit/Add Panel -->
     <Transition name="fade">
       <div v-if="showPanel" class="panel-backdrop" @click="closePanel"></div>
     </Transition>
+
+    <!-- Modal Tambah Stok -->
+    <Teleport to="body">
+      <div v-if="showStockModal" class="modal-backdrop" @click="closeStockModal">
+        <div class="modal-content" style="max-width: 450px" @click.stop>
+          <div class="flex justify-between items-center mb-4 pb-3 border-b border-gray-100">
+            <div>
+              <h3 class="font-bold text-lg text-gray-800">Tambah Stok Barang</h3>
+              <p class="text-sm text-gray-500">{{ stockFormData.item_name }}</p>
+            </div>
+            <button class="text-gray-400 hover:text-gray-600" @click="closeStockModal">
+              <X size="20" />
+            </button>
+          </div>
+
+          <div v-if="stockFormError" class="alert alert-error mb-4">
+            <AlertCircle size="16" />
+            <span>{{ stockFormError }}</span>
+          </div>
+
+          <form @submit.prevent="handleStockSubmit">
+            <div class="form-row">
+              <div class="form-group mb-4">
+                <label class="form-label text-sm">Jumlah Masuk <span class="text-danger">*</span></label>
+                <input type="number" required min="1" class="input" v-model="stockFormData.qty" />
+              </div>
+              <div class="form-group mb-4">
+                <label class="form-label text-sm">Total Harga Beli (Rp) <span class="text-danger">*</span></label>
+                <input type="number" required min="0" class="input" v-model="stockFormData.price" />
+              </div>
+            </div>
+
+            <div class="form-group mb-4">
+              <label class="form-label text-sm">Nomor Batch</label>
+              <input type="text" class="input" placeholder="Otomatis jika kosong" v-model="stockFormData.batch_number" />
+            </div>
+
+            <div class="form-group mb-6">
+              <label class="form-label text-sm">Tanggal Kedaluwarsa (Exp Date)</label>
+              <input type="date" class="input" v-model="stockFormData.expiry_date" />
+            </div>
+
+            <div class="flex gap-3 justify-end">
+              <button type="button" class="btn btn-outline" @click="closeStockModal" :disabled="isStockSubmitting">Batal</button>
+              <button type="submit" class="btn btn-primary" style="background-color: #047857;" :disabled="isStockSubmitting">
+                <Loader2 v-if="isStockSubmitting" size="16" class="spin-icon" />
+                {{ isStockSubmitting ? 'Menyimpan...' : 'Simpan Stok' }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </Teleport>
 
     <!-- Slide-in Side Panel -->
     <Transition name="slide-panel">
@@ -225,8 +287,8 @@
 
 <script setup>
 import { ref, onMounted, reactive, computed } from 'vue';
-import { Plus, Search, Archive, X, AlertCircle, CheckCircle, Loader2, Pencil } from 'lucide-vue-next';
-import { fetchItems, createItem, updateItem } from '@/utils/api';
+import { Plus, Search, Archive, X, AlertCircle, CheckCircle, Loader2, Pencil, PackagePlus } from 'lucide-vue-next';
+import { fetchItems, createItem, updateItem, createTransaction } from '@/utils/api';
 
 definePageMeta({
   middleware: 'auth',
@@ -347,6 +409,69 @@ const loadItems = async (page = 1) => {
     items.value = data?.data || [];
   } catch (e) {
     console.error(e);
+  }
+};
+
+// --- STOCK MODAL LOGIC ---
+const showStockModal = ref(false);
+const isStockSubmitting = ref(false);
+const stockFormError = ref('');
+
+const stockFormData = reactive({
+  item_id: null,
+  item_name: '',
+  qty: 0,
+  price: 0,
+  batch_number: '',
+  expiry_date: ''
+});
+
+const openStockModal = (item) => {
+  stockFormError.value = '';
+  stockFormData.item_id = item.id;
+  stockFormData.item_name = item.name;
+  stockFormData.qty = 10;
+  stockFormData.price = item.base_price * 10;
+  stockFormData.batch_number = '';
+  stockFormData.expiry_date = '';
+  showStockModal.value = true;
+};
+
+const closeStockModal = () => {
+  showStockModal.value = false;
+};
+
+const handleStockSubmit = async () => {
+  if (stockFormData.qty <= 0) {
+    stockFormError.value = 'Jumlah barang masuk harus lebih dari 0';
+    return;
+  }
+  
+  try {
+    isStockSubmitting.value = true;
+    stockFormError.value = '';
+    
+    const payload = {
+      type: 'IN',
+      total_amount: stockFormData.price,
+      notes: 'Penambahan stok manual',
+      items: [{
+        item_id: stockFormData.item_id,
+        qty: stockFormData.qty,
+        price: stockFormData.price / stockFormData.qty,
+        batch_number: stockFormData.batch_number || ('BATCH-' + new Date().getTime()),
+        expiry_date: stockFormData.expiry_date || '2099-12-31'
+      }]
+    };
+    
+    await createTransaction(payload);
+    closeStockModal();
+    loadItems(currentPage.value);
+    alert('Stok berhasil ditambahkan!');
+  } catch (error) {
+    stockFormError.value = error.response?.data?.error || 'Terjadi kesalahan saat menyimpan stok';
+  } finally {
+    isStockSubmitting.value = false;
   }
 };
 
@@ -648,5 +773,25 @@ const handleSubmit = async () => {
   .col-price {
     display: none;
   }
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  width: 100%;
 }
 </style>
