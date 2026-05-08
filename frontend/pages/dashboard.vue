@@ -3,9 +3,9 @@
     <div class="dashboard-header">
       <h1 class="text-xl font-semibold">Dasbor Farmasi</h1>
       <div class="header-actions">
-        <button class="btn btn-outline flex items-center gap-2" :disabled="!isAdmin">
-          <RefreshCw :size="14" />
-          Perbarui Data
+        <button class="btn btn-outline flex items-center gap-2" @click="refreshData" :disabled="isLoading">
+          <RefreshCw :size="14" :class="{ 'spin-icon': isLoading }" />
+          {{ isLoading ? 'Memperbarui...' : 'Perbarui Data' }}
         </button>
         <button v-if="isAdmin" class="btn btn-primary">Laporan Bulanan</button>
       </div>
@@ -39,7 +39,7 @@
         <MetricCard 
           title="Mutasi Hari Ini" 
           :value="stats ? stats.metrics.today_transactions : '...'" 
-          change="Live" 
+          change="Langsung" 
           :isPositive="true" 
           comparisonText="Akumulasi barang masuk dan keluar" 
         />
@@ -78,20 +78,20 @@
       </div>
 
       <div class="charts-grid-top mb-6 grid grid-cols-2 gap-6">
-        <ChartWidget title="Tren Stok Masuk dan Keluar">
-          <StockTrendChart />
+        <ChartWidget :title="trendTitle">
+          <StockTrendChart :chartData="stats?.charts?.stock_trend" />
         </ChartWidget>
         <ChartWidget title="Distribusi Kategori">
-          <SessionRoleChart />
+          <SessionRoleChart :chartData="stats?.charts?.category_distribution" />
         </ChartWidget>
       </div>
 
       <div class="charts-grid-bottom mt-6 grid grid-cols-2 gap-6">
-        <ChartWidget title="Analisis Radar Penjualan">
-          <CategoryRadarChart />
+        <ChartWidget title="Stok Per Kategori">
+          <CategoryRadarChart :chartData="stats?.charts?.category_stock" />
         </ChartWidget>
         <ChartWidget title="Kontribusi Supplier Utama">
-          <SupplierDonutChart />
+          <SupplierDonutChart :chartData="stats?.charts?.top_suppliers" />
         </ChartWidget>
       </div>
     </div>
@@ -99,7 +99,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { AlertCircle, AlertTriangle, RefreshCw } from 'lucide-vue-next';
 import { fetchDashboardStats } from '@/utils/api';
 import { useAuthRole } from '@/composables/useAuthRole';
@@ -110,14 +110,31 @@ definePageMeta({
 });
 
 const stats = ref(null);
+const isLoading = ref(false);
 const { isAdmin } = useAuthRole();
 
-onMounted(async () => {
+const trendTitle = computed(() => {
+  const year = stats.value?.charts?.stock_trend?.year || new Date().getFullYear();
+  return `Tren Stok Masuk dan Keluar ${year}`;
+});
+
+const loadDashboard = async () => {
+  isLoading.value = true;
   try {
     stats.value = await fetchDashboardStats();
   } catch (error) {
     console.error(error);
+  } finally {
+    isLoading.value = false;
   }
+};
+
+const refreshData = () => {
+  loadDashboard();
+};
+
+onMounted(() => {
+  loadDashboard();
 });
 </script>
 
@@ -136,5 +153,14 @@ onMounted(async () => {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1.5rem;
+}
+
+.spin-icon {
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 </style>

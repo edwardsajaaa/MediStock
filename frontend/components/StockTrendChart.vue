@@ -1,32 +1,81 @@
 <template>
   <div class="h-full w-full" style="min-height: 300px;">
-    <div class="flex gap-4 mb-4 text-sm font-medium">
+    <div class="flex gap-4 mb-4 text-sm font-medium flex-wrap">
       <div class="flex items-center gap-2">
         <div class="w-3 h-3 rounded-full bg-[#256e5f]"></div>
         <span class="text-muted">Stok Masuk (Nilai)</span>
-        <span class="font-bold text-main">$18,500.00 • 58%</span>
+        <span class="font-bold text-main">{{ formatRupiah(totalIn) }} • {{ pctIn }}%</span>
       </div>
       <div class="flex items-center gap-2">
         <div class="w-3 h-3 rounded-full bg-[#f59e0b]"></div>
         <span class="text-muted">Stok Keluar (Nilai)</span>
-        <span class="font-bold text-main">$13,200.00 • 42%</span>
+        <span class="font-bold text-main">{{ formatRupiah(totalOut) }} • {{ pctOut }}%</span>
       </div>
     </div>
     <ClientOnly>
-      <apexchart type="line" height="250" :options="chartOptions" :series="series"></apexchart>
+      <apexchart 
+        v-if="isReady"
+        type="line" 
+        height="250" 
+        :options="chartOptions" 
+        :series="series"
+        :key="chartKey"
+      ></apexchart>
+      <div v-else class="chart-loading">
+        <span class="text-sm text-muted">Memuat grafik...</span>
+      </div>
     </ClientOnly>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 
-const series = ref([
-  { name: 'Stok Masuk', data: [12000, 8000, 10000, 13000, 9000, 14000, 16000, 18500] },
-  { name: 'Stok Keluar', data: [8000, 6000, 11000, 9000, 12000, 10000, 13000, 13200] }
+const props = defineProps({
+  chartData: {
+    type: Object,
+    default: () => null
+  }
+});
+
+const chartKey = ref(0);
+const isReady = computed(() => !!props.chartData);
+
+// Force re-render when data changes
+watch(() => props.chartData, () => {
+  chartKey.value++;
+}, { deep: true });
+
+const formatRupiah = (val) => {
+  if (!val && val !== 0) return 'Rp 0';
+  return 'Rp ' + Math.round(val).toLocaleString('id-ID');
+};
+
+const formatAxis = (value) => {
+  if (value >= 1000000) return `Rp ${(value/1000000).toFixed(1)}Jt`;
+  if (value >= 1000) return `Rp ${Math.round(value/1000)}Rb`;
+  return `Rp ${value}`;
+};
+
+const totalIn = computed(() => props.chartData?.total_in || 0);
+const totalOut = computed(() => props.chartData?.total_out || 0);
+
+const pctIn = computed(() => {
+  const total = totalIn.value + totalOut.value;
+  return total > 0 ? Math.round((totalIn.value / total) * 100) : 0;
+});
+
+const pctOut = computed(() => {
+  const total = totalIn.value + totalOut.value;
+  return total > 0 ? Math.round((totalOut.value / total) * 100) : 0;
+});
+
+const series = computed(() => [
+  { name: 'Stok Masuk', data: props.chartData?.series_in || Array(12).fill(0) },
+  { name: 'Stok Keluar', data: props.chartData?.series_out || Array(12).fill(0) }
 ]);
 
-const chartOptions = ref({
+const chartOptions = computed(() => ({
   chart: {
     type: 'line',
     toolbar: { show: false },
@@ -43,7 +92,7 @@ const chartOptions = ref({
     yaxis: { lines: { show: true } }
   },
   xaxis: {
-    categories: ['Mar 2023', 'Jun 2023', 'Sep 2023', 'Dec 2023', 'Mar 2024', 'Jun 2024', 'Sep 2024', 'Dec 2024'],
+    categories: props.chartData?.labels || ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
     labels: { style: { colors: '#94a3b8', fontSize: '12px' } },
     axisBorder: { show: false },
     axisTicks: { show: false }
@@ -51,12 +100,25 @@ const chartOptions = ref({
   yaxis: {
     labels: { 
       style: { colors: '#94a3b8', fontSize: '12px' },
-      formatter: (value) => `$${value/1000}K`
+      formatter: formatAxis
     }
   },
   tooltip: {
-    y: { formatter: (value) => `$${value}` }
+    y: { formatter: (value) => formatRupiah(value) }
   },
-  legend: { show: false }
-});
+  legend: { show: false },
+  noData: {
+    text: 'Belum ada data transaksi',
+    style: { fontSize: '14px', color: '#94a3b8' }
+  }
+}));
 </script>
+
+<style scoped>
+.chart-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 250px;
+}
+</style>
