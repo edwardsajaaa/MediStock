@@ -110,15 +110,15 @@ const handleNavClick = () => {
   height: 100vh;
   background-color: var(--sidebar-bg);
   border-right: 1px solid var(--border-color);
-  width: 224px;
+  width: 212px;
 }
 
 .sidebar-header {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1rem 0.9rem 0.85rem;
-  min-height: 60px;
+  padding: 0.9rem 0.8rem 0.75rem;
+  min-height: 56px;
 }
 
 .logo-icon {
@@ -141,54 +141,54 @@ const handleNavClick = () => {
 }
 
 .sidebar.collapsed .menu-group {
-  margin-bottom: 0.7rem;
+  margin-bottom: 0.6rem;
 }
 
 .sidebar.collapsed .sidebar-header {
-  padding: 0.9rem 0.4rem;
+  padding: 0.75rem 0.35rem;
 }
 
 .sidebar.collapsed .menu-item {
   justify-content: center;
-  padding: 0.62rem;
+  padding: 0.55rem;
 }
 
 .sidebar-scroll {
   flex: 1;
   overflow-y: auto;
-  padding: 0 0.8rem;
+  padding: 0 0.7rem;
 }
 
 .menu-group {
-  margin-bottom: 1rem;
+  margin-bottom: 0.85rem;
 }
 
 .menu-label {
-  font-size: 0.75rem;
+  font-size: 0.68rem;
   font-weight: 600;
   color: var(--text-light);
-  margin-bottom: 0.5rem;
-  padding-left: 0.65rem;
-  letter-spacing: 0.05em;
+  margin-bottom: 0.45rem;
+  padding-left: 0.55rem;
+  letter-spacing: 0.08em;
 }
 
 .menu-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.65rem 0.85rem;
+  padding: 0.52rem 0.72rem;
   color: var(--text-main);
   text-decoration: none;
-  font-size: 0.9rem;
+  font-size: 0.82rem;
   font-weight: 500;
-  border-radius: var(--radius-md);
-  margin-bottom: 0.25rem;
+  border-radius: 0.7rem;
+  margin-bottom: 0.2rem;
   transition: all 0.2s ease;
 }
 
 .menu-item > span, .submenu-title > span {
   flex: 1;
-  margin-left: 0.75rem;
+  margin-left: 0.6rem;
 }
 
 .sidebar.collapsed .submenu-title {
@@ -196,16 +196,16 @@ const handleNavClick = () => {
 }
 
 .menu-item:hover {
-  background-color: var(--bg-color);
+  background-color: #f8fafc;
 }
 
 .menu-item.active {
-  background-color: var(--primary-color);
+  background-color: rgba(37, 110, 95, 0.12);
   color: white;
 }
 
 .menu-item.active svg {
-  color: white;
+  color: var(--primary-color);
 }
 
 .menu-item svg {
@@ -255,8 +255,8 @@ const handleNavClick = () => {
 }
 
 .toggle-switch {
-  width: 36px;
-  height: 20px;
+  width: 34px;
+  height: 18px;
   background-color: var(--border-color);
   border-radius: 20px;
   position: relative;
@@ -268,8 +268,8 @@ const handleNavClick = () => {
   position: absolute;
   top: 2px;
   left: 2px;
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   background-color: white;
   border-radius: 50%;
   transition: transform 0.3s;
@@ -286,12 +286,12 @@ const handleNavClick = () => {
 .divider {
   height: 1px;
   background-color: var(--border-color);
-  margin: 1rem 0;
+  margin: 0.85rem 0;
 }
 
 .premium-banner {
-  margin: 0.85rem;
-  padding: 1rem;
+  margin: 0.7rem;
+  padding: 0.85rem;
   background: linear-gradient(180deg, #ecfdf5 0%, #f8fafc 100%);
   border: 1px solid #d1fae5;
   border-radius: 14px;
@@ -312,20 +312,20 @@ const handleNavClick = () => {
 }
 
 .banner-icon-bg {
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   background-color: white;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 1rem;
+  margin-bottom: 0.85rem;
 }
 
 .premium-banner p {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   line-height: 1.4;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
   color: var(--text-muted);
 }
 
@@ -334,8 +334,8 @@ const handleNavClick = () => {
   color: white;
   border: none;
   border-radius: 10px;
-  padding: 0.5rem 0.75rem;
-  font-size: 0.75rem;
+  padding: 0.45rem 0.7rem;
+  font-size: 0.7rem;
   font-weight: 600;
   cursor: pointer;
   width: 100%;
