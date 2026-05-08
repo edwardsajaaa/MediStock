@@ -85,29 +85,50 @@
           <input type="text" class="input" placeholder="Contoh: resep, pembelian supplier, atau permintaan unit" v-model="notes" />
         </div>
 
-        <div v-if="cart.length > 0" class="cashier-section mt-4 pt-4 border-t border-gray-200">
-          <div class="flex justify-between items-center mb-3">
-            <span class="font-medium text-sm text-muted">Uang Pembeli (Rp)</span>
-            <input type="number" class="input text-right" style="width: 150px" placeholder="0" v-model.number="cashReceived" aria-label="Uang Pembeli" />
-          </div>
+        <div v-if="cart.length > 0" class="cashier-section mt-6 p-5 rounded-xl border border-gray-200" style="background-color: #f8fafc;">
+          <h3 class="font-bold text-gray-700 mb-4 pb-2 border-b border-gray-200">Pembayaran Kasir</h3>
+          
           <div class="flex justify-between items-center mb-4">
-            <span class="font-medium text-sm text-muted">Kembalian</span>
-            <span class="text-lg font-bold" :class="changeAmount < 0 ? 'text-danger' : 'text-success'">
+            <label for="cash-input" class="font-medium text-gray-600 text-sm">Uang Pembeli (Rp)</label>
+            <div class="relative">
+              <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium">Rp</span>
+              <input 
+                id="cash-input"
+                type="number" 
+                class="input text-right font-bold text-lg" 
+                style="width: 200px; padding-left: 2.5rem; height: 44px;" 
+                placeholder="0" 
+                v-model.number="cashReceived" 
+                aria-label="Uang Pembeli" 
+              />
+            </div>
+          </div>
+          
+          <div class="flex justify-between items-center pt-2">
+            <span class="font-medium text-gray-600 text-sm">Kembalian</span>
+            <span v-if="!cashReceived" class="text-sm italic text-gray-400">
+              Menunggu input nominal...
+            </span>
+            <span v-else-if="changeAmount < 0" class="text-sm font-medium text-danger bg-red-50 px-2 py-1 rounded">
+              Uang belum cukup
+            </span>
+            <span v-else class="text-xl font-bold text-success">
               Rp {{ changeAmount.toLocaleString() }}
             </span>
           </div>
         </div>
 
-        <div class="total-bar" style="margin-top: 0; padding-top: 1rem; border-top: 1px solid var(--border-color);">
+        <div class="total-bar mt-6">
           <div>
             <p class="text-sm text-muted mb-1">Total Tagihan</p>
-            <h3 class="text-2xl font-bold" style="color: #047857">
+            <h3 class="text-3xl font-bold" style="color: #047857">
               Rp {{ totalCart.toLocaleString() }}
             </h3>
           </div>
           <button class="submit-btn" 
+                  style="font-size: 1rem; padding: 0.75rem 2rem; min-height: 50px;"
                   @click="handleSubmit" 
-                  :disabled="cart.length === 0 || changeAmount < 0">
+                  :disabled="cart.length === 0 || changeAmount < 0 || !cashReceived">
             Simpan Transaksi
           </button>
         </div>
