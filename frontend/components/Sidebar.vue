@@ -28,41 +28,40 @@
           <span v-if="isSidebarOpen">Kartu Stok</span>
         </NuxtLink>
         
-        <div v-if="isAdmin" class="menu-item has-submenu" title="Peringatan Cerdas">
-          <div class="submenu-title">
-            <Bell :size="20" />
-            <span v-if="isSidebarOpen">Peringatan Cerdas</span>
-          </div>
-          <ChevronRight v-if="isSidebarOpen" :size="16" class="chevron" />
-        </div>
+        <NuxtLink to="/alerts" class="menu-item" active-class="active" title="Peringatan Cerdas" @click="handleNavClick">
+          <Bell :size="20" />
+          <span v-if="isSidebarOpen">Peringatan Cerdas</span>
+        </NuxtLink>
         
-        <div v-if="isAdmin" class="menu-item has-submenu" title="Laporan">
-          <div class="submenu-title">
-            <BarChart3 :size="20" />
-            <span v-if="isSidebarOpen">Laporan</span>
-          </div>
-          <ChevronRight v-if="isSidebarOpen" :size="16" class="chevron" />
-        </div>
+        <NuxtLink v-if="isAdmin" to="/reports" class="menu-item" active-class="active" title="Laporan" @click="handleNavClick">
+          <BarChart3 :size="20" />
+          <span v-if="isSidebarOpen">Laporan</span>
+        </NuxtLink>
+
+        <NuxtLink v-if="isAdmin" to="/users" class="menu-item" active-class="active" title="Kelola Pengguna" @click="handleNavClick">
+          <Users :size="20" />
+          <span v-if="isSidebarOpen">Kelola Pengguna</span>
+        </NuxtLink>
       </div>
       
       <div v-if="isSidebarOpen" class="divider"></div>
       
       <div class="menu-group">
-        <div class="menu-item toggle-item">
+        <div class="menu-item toggle-item" @click="trainingMode = !trainingMode">
           <div style="display: flex; align-items: center; gap: 0.75rem;">
             <PlaySquare :size="20" color="var(--text-muted)" />
             <span v-if="isSidebarOpen">Mode Pelatihan</span>
           </div>
-          <div v-if="isSidebarOpen" class="toggle-switch active"></div>
+          <div v-if="isSidebarOpen" class="toggle-switch" :class="{ active: trainingMode }"></div>
         </div>
-        <a href="#" class="menu-item">
+        <NuxtLink to="/ledger" class="menu-item" title="Masukan" @click="handleNavClick">
           <MessageSquare :size="20" />
           <span v-if="isSidebarOpen">Masukan</span>
-        </a>
-        <a href="#" class="menu-item">
+        </NuxtLink>
+        <NuxtLink to="/ledger" class="menu-item" title="Riwayat Aktivitas" @click="handleNavClick">
           <Info :size="20" />
           <span v-if="isSidebarOpen">Riwayat Aktivitas</span>
-        </a>
+        </NuxtLink>
       </div>
     </div>
     
@@ -71,7 +70,7 @@
         <ScrollText :size="16" color="var(--primary-color)" />
       </div>
       <p>Aktifkan pemantauan real-time untuk stok dan laporan yang lebih rapi.</p>
-      <button class="btn-upgrade">Aktifkan</button>
+      <NuxtLink to="/reports" class="btn-upgrade" @click="handleNavClick">Lihat Laporan</NuxtLink>
     </div>
   </aside>
 </template>
@@ -84,17 +83,19 @@ import {
   ScrollText, 
   Bell, 
   BarChart3, 
+  Users,
   PlaySquare, 
   MessageSquare, 
   Info,
-  ChevronRight
 } from 'lucide-vue-next';
 
+import { ref } from 'vue';
 import { useAuthRole } from '@/composables/useAuthRole';
 import { useSidebar } from '@/composables/useSidebar';
 
 const { isAdmin } = useAuthRole();
 const { isSidebarOpen, closeSidebar } = useSidebar();
+const trainingMode = ref(true);
 
 const handleNavClick = () => {
   if (typeof window !== 'undefined' && window.innerWidth <= 900) {
@@ -213,37 +214,6 @@ const handleNavClick = () => {
   flex-shrink: 0;
 }
 
-.has-submenu {
-  cursor: pointer;
-}
-
-.submenu-title {
-  display: flex;
-  align-items: center;
-  flex: 1;
-}
-
-.submenu-items {
-  display: flex;
-  flex-direction: column;
-  padding-left: 3rem;
-  margin-bottom: 0.5rem;
-  border-left: 1px solid var(--border-color);
-  margin-left: 1.35rem;
-}
-
-.submenu-items a {
-  padding: 0.4rem 0;
-  color: var(--text-muted);
-  text-decoration: none;
-  font-size: 0.85rem;
-  transition: color 0.2s;
-}
-
-.submenu-items a:hover {
-  color: var(--text-main);
-}
-
 .toggle-item {
   cursor: pointer;
 }
@@ -330,6 +300,7 @@ const handleNavClick = () => {
 }
 
 .btn-upgrade {
+  display: block;
   background-color: var(--primary-color);
   color: white;
   border: none;
@@ -339,5 +310,12 @@ const handleNavClick = () => {
   font-weight: 600;
   cursor: pointer;
   width: 100%;
+  text-align: center;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.btn-upgrade:hover {
+  background-color: #1e5c4e;
 }
 </style>

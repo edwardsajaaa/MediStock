@@ -10,24 +10,24 @@
           </div>
 
           <div class="left-headline">
-            <h1>Sistem terpercaya<br />manajemen farmasi.</h1>
-            <p>Pengelolaan inventaris apotek yang akurat, cepat, dan aman dengan metode FEFO.</p>
+            <h1>Bergabung dengan<br />tim farmasi digital.</h1>
+            <p>Daftarkan akun Anda untuk mulai menggunakan sistem manajemen inventaris MediStock.</p>
           </div>
 
           <div class="feature-badge">
             <div class="badge-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
             </div>
             <div>
-              <div class="badge-title">Akses Aman</div>
-              <div class="badge-sub">Hak akses berbasis peran staf</div>
+              <div class="badge-title">Multi-Role</div>
+              <div class="badge-sub">Admin dan Staf Farmasi dalam satu sistem</div>
             </div>
           </div>
         </div>
 
         <div class="left-illustration">
           <div class="illustration-inner">
-            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/></svg>
             <div class="illus-lines">
               <div class="illus-line"></div>
               <div class="illus-line short"></div>
@@ -42,11 +42,26 @@
       <div class="right-panel">
         <div class="right-content">
           <div class="right-header">
-            <h2>Selamat Datang</h2>
-            <p>Masukkan kredensial akun untuk mengakses sistem.</p>
+            <h2>Buat Akun Baru</h2>
+            <p>Lengkapi data berikut untuk mendaftarkan akun sistem.</p>
           </div>
 
-          <form class="login-form" @submit.prevent="handleLogin">
+          <form class="login-form" @submit.prevent="handleRegister">
+            <!-- Name -->
+            <div class="field-group">
+              <label>NAMA LENGKAP</label>
+              <div class="input-wrap">
+                <svg class="field-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                <input
+                  v-model="fullName"
+                  type="text"
+                  placeholder="Nama lengkap Anda"
+                  required
+                  :disabled="loading"
+                />
+              </div>
+            </div>
+
             <!-- Email -->
             <div class="field-group">
               <label>ALAMAT EMAIL</label>
@@ -62,18 +77,27 @@
               </div>
             </div>
 
+            <!-- Role -->
+            <div class="field-group">
+              <label>PERAN</label>
+              <div class="input-wrap">
+                <svg class="field-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <select v-model="role" class="select-role" :disabled="loading">
+                  <option value="staf">Staf Farmasi</option>
+                  <option value="admin">Admin</option>
+                </select>
+              </div>
+            </div>
+
             <!-- Password -->
             <div class="field-group">
-              <div class="label-row">
-                <label>PASSWORD</label>
-                <a href="#" class="forgot-link">Lupa?</a>
-              </div>
+              <label>PASSWORD</label>
               <div class="input-wrap">
                 <svg class="field-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                 <input
                   v-model="password"
                   :type="showPassword ? 'text' : 'password'"
-                  placeholder="••••••••"
+                  placeholder="Minimal 6 karakter"
                   required
                   :disabled="loading"
                 />
@@ -84,10 +108,25 @@
               </div>
             </div>
 
-            <!-- Info note -->
-            <div class="info-note">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-              <span>Tingkat akses ditentukan berdasarkan peran yang terdaftar: <strong>Admin</strong> (kendali penuh) atau <strong>Staf Farmasi</strong> (inventaris).</span>
+            <!-- Confirm Password -->
+            <div class="field-group">
+              <label>KONFIRMASI PASSWORD</label>
+              <div class="input-wrap">
+                <svg class="field-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                <input
+                  v-model="confirmPassword"
+                  :type="showPassword ? 'text' : 'password'"
+                  placeholder="Ulangi password Anda"
+                  required
+                  :disabled="loading"
+                />
+              </div>
+            </div>
+
+            <!-- Success -->
+            <div v-if="successMessage" class="success-note">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              <span>{{ successMessage }}</span>
             </div>
 
             <!-- Error -->
@@ -97,13 +136,13 @@
             </div>
 
             <button type="submit" class="btn-login" :disabled="loading">
-              <span v-if="!loading">Masuk ke Portal</span>
+              <span v-if="!loading">Daftarkan Akun</span>
               <span v-else class="spinner"></span>
             </button>
           </form>
 
           <div class="register-link-section">
-            <p>Belum punya akun? <NuxtLink to="/register" class="link-green">Daftar di sini</NuxtLink></p>
+            <p>Sudah punya akun? <NuxtLink to="/login" class="link-green">Masuk di sini</NuxtLink></p>
           </div>
 
           <div class="right-footer">
@@ -125,12 +164,15 @@ definePageMeta({
 
 const supabase = useSupabaseClient()
 const router = useRouter()
-const route = useRoute()
 
+const fullName = ref('')
 const email = ref('')
 const password = ref('')
+const confirmPassword = ref('')
+const role = ref('staf')
 const loading = ref(false)
 const errorMessage = ref('')
+const successMessage = ref('')
 const showPassword = ref(false)
 
 const user = useSupabaseUser()
@@ -138,26 +180,48 @@ watchEffect(() => {
   if (user.value) router.push('/dashboard')
 })
 
-async function handleLogin() {
+async function handleRegister() {
   loading.value = true
   errorMessage.value = ''
+  successMessage.value = ''
+
+  if (password.value.length < 6) {
+    errorMessage.value = 'Password harus minimal 6 karakter.'
+    loading.value = false
+    return
+  }
+
+  if (password.value !== confirmPassword.value) {
+    errorMessage.value = 'Password dan konfirmasi tidak cocok.'
+    loading.value = false
+    return
+  }
+
   try {
-    const { error } = await supabase.auth.signInWithPassword({
+    const { error } = await supabase.auth.signUp({
       email: email.value,
       password: password.value,
+      options: {
+        data: {
+          full_name: fullName.value,
+          role: role.value,
+        }
+      }
     })
 
     if (error) {
-      if (error.message.includes('Invalid login credentials')) {
-        errorMessage.value = 'Email atau password salah. Silakan coba lagi.'
-      } else if (error.message.includes('Email not confirmed')) {
-        errorMessage.value = 'Email belum dikonfirmasi. Periksa inbox Anda.'
+      if (error.message.includes('already registered')) {
+        errorMessage.value = 'Email sudah terdaftar. Silakan gunakan email lain.'
       } else {
         errorMessage.value = error.message
       }
     } else {
-      const redirectPath = typeof route.query.redirect === 'string' ? route.query.redirect : '/dashboard'
-      await router.push(redirectPath)
+      successMessage.value = 'Akun berhasil dibuat! Silakan periksa email untuk konfirmasi, lalu masuk.'
+      fullName.value = ''
+      email.value = ''
+      password.value = ''
+      confirmPassword.value = ''
+      role.value = 'staf'
     }
   } finally {
     loading.value = false
@@ -214,7 +278,6 @@ async function handleLogin() {
   overflow: hidden;
 }
 
-/* Dark blue overlay on top of the photo */
 .left-panel::before {
   content: '';
   position: absolute;
@@ -334,7 +397,7 @@ async function handleLogin() {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4rem 3.5rem;
+  padding: 3rem 3.5rem;
 }
 
 .right-content {
@@ -342,14 +405,14 @@ async function handleLogin() {
   max-width: 460px;
   display: flex;
   flex-direction: column;
-  gap: 2.25rem;
+  gap: 1.75rem;
 }
 
 .right-header h2 {
-  font-size: 2.6rem;
+  font-size: 2.4rem;
   font-weight: 600;
   color: var(--brand-dark-soft);
-  margin-bottom: 0.6rem;
+  margin-bottom: 0.5rem;
   letter-spacing: -0.03em;
 }
 
@@ -363,13 +426,13 @@ async function handleLogin() {
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 1.1rem;
+  gap: 0.9rem;
 }
 
 .field-group {
   display: flex;
   flex-direction: column;
-  gap: 0.45rem;
+  gap: 0.4rem;
 }
 
 .field-group label {
@@ -378,21 +441,6 @@ async function handleLogin() {
   color: var(--brand-muted-light);
   letter-spacing: 0.06em;
 }
-
-.label-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.forgot-link {
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: var(--brand-green-hover);
-  text-decoration: none;
-}
-
-.forgot-link:hover { text-decoration: underline; }
 
 .input-wrap {
   position: relative;
@@ -407,7 +455,8 @@ async function handleLogin() {
   pointer-events: none;
 }
 
-.input-wrap input {
+.input-wrap input,
+.select-role {
   width: 100%;
   padding: 0.72rem 2.75rem;
   border: 1.5px solid #e2e8f0;
@@ -417,17 +466,25 @@ async function handleLogin() {
   background: #f8fafc;
   transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
   outline: none;
+  font-family: inherit;
 }
 
-.input-wrap input:focus {
+.input-wrap input:focus,
+.select-role:focus {
   border-color: var(--brand-green);
   background: #fff;
   box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.14);
 }
 
-.input-wrap input:disabled {
+.input-wrap input:disabled,
+.select-role:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.select-role {
+  appearance: none;
+  cursor: pointer;
 }
 
 .eye-btn {
@@ -445,8 +502,8 @@ async function handleLogin() {
 
 .eye-btn:hover { color: #475569; }
 
-/* INFO NOTE */
-.info-note {
+/* SUCCESS NOTE */
+.success-note {
   display: flex;
   align-items: flex-start;
   gap: 0.5rem;
@@ -459,8 +516,7 @@ async function handleLogin() {
   line-height: 1.5;
 }
 
-.info-note svg { flex-shrink: 0; margin-top: 2px; }
-.info-note strong { color: #166534; }
+.success-note svg { flex-shrink: 0; margin-top: 2px; }
 
 /* ERROR NOTE */
 .error-note {
@@ -493,6 +549,7 @@ async function handleLogin() {
   min-height: 48px;
   letter-spacing: 0.01em;
   box-shadow: 0 6px 16px rgba(34, 197, 94, 0.35);
+  font-family: inherit;
 }
 
 .btn-login:hover:not(:disabled) {
@@ -515,24 +572,7 @@ async function handleLogin() {
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* FOOTER */
-.right-footer {
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-}
-
-.right-footer p {
-  font-size: 0.75rem;
-  color: var(--brand-muted-light);
-}
-
-.right-footer p:last-child {
-  color: #64748b;
-}
-
-/* REGISTER LINK */
+/* Register Link */
 .register-link-section {
   text-align: center;
 }
@@ -550,6 +590,23 @@ async function handleLogin() {
 
 .link-green:hover {
   text-decoration: underline;
+}
+
+/* FOOTER */
+.right-footer {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.right-footer p {
+  font-size: 0.75rem;
+  color: var(--brand-muted-light);
+}
+
+.right-footer p:last-child {
+  color: #64748b;
 }
 
 /* RESPONSIVE */

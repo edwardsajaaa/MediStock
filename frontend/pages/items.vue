@@ -5,10 +5,34 @@
         <h1 class="page-title">Data Master</h1>
         <p class="text-sm text-muted">Kelola data obat dan alat kesehatan</p>
       </div>
-      <button class="btn btn-primary gap-2 btn-add-item" @click="openPanel">
-        <Plus size="18" />
-        Tambah Data
-      </button>
+      <div class="flex gap-3">
+        <template v-if="isAdmin">
+          <button class="btn btn-outline gap-2" @click="downloadTemplate">
+            <Download size="16" />
+            Template Import
+          </button>
+          <button class="btn btn-outline gap-2" @click="triggerFileUpload">
+            <Upload size="16" />
+            Import CSV
+          </button>
+          <input 
+            type="file" 
+            accept=".csv" 
+            ref="fileInput" 
+            style="display: none" 
+            @change="handleFileUpload" 
+          />
+        </template>
+        <button class="btn btn-primary gap-2 btn-add-item" @click="openPanel">
+          <Plus size="18" />
+          Tambah Data
+        </button>
+      </div>
+    </div>
+
+    <!-- Upload Status/Loading -->
+    <div v-if="importing" class="mb-6 rounded-lg border px-4 py-3 text-sm flex items-center gap-2" style="border-color: #fde68a; background: #fffbeb; color: #b45309;">
+      <span class="spin-anim" style="display:inline-block">⏳</span> Sedang mengimpor data, mohon tunggu...
     </div>
 
     <div class="card">
@@ -286,9 +310,12 @@
 </template>
 
 <script setup>
-import { ref, onMounted, reactive, computed } from 'vue';
-import { Plus, Search, Archive, X, AlertCircle, CheckCircle, Loader2, Pencil, PackagePlus } from 'lucide-vue-next';
-import { fetchItems, createItem, updateItem, createTransaction } from '@/utils/api';
+import { ref, onMounted, reactive, computed, watchEffect } from 'vue';
+import { Plus, Search, Archive, X, AlertCircle, CheckCircle, Loader2, Pencil, PackagePlus, Download, Upload } from 'lucide-vue-next';
+import { fetchItems, createItem, updateItem, createTransaction, bulkCreateItems } from '@/utils/api';
+import { downloadImportTemplateCSV } from '@/utils/export';
+import { useAuthRole } from '@/composables/useAuthRole';
+import Papa from 'papaparse';
 
 definePageMeta({
   middleware: 'auth',
@@ -307,6 +334,9 @@ const isEditMode = ref(false);
 const editingItemId = ref(null);
 const selectedExistingId = ref('');
 
+const importing = ref(false);
+const fileInput = ref(null);
+const { isAdmin } = useAuthRole();
 const formData = reactive({
   name: '', category: 'Obat Bebas', sku: '', min_stock: 0, base_price: 0, sell_price: 0
 });
@@ -517,10 +547,63 @@ const handleSubmit = async () => {
     isSubmitting.value = false;
   }
 };
+
+// --- Import CSV Logic ---
+const downloadTemplate = () => {
+  downloadImportTemplateCSV();
+};
+
+const triggerFileUpload = () => {
+  fileInput.value?.click();
+};
+
+const handleFileUpload = (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  importing.value = true;
+
+  Papa.parse(file, {
+    header: true,
+    skipEmptyLines: true,
+    complete: async (results) => {
+      try {
+        const parsedItems = results.data
+          .filter(row => row['SKU'] && !row['SKU'].startsWith('CONTOH')) // Filter empty SKUs and dummy examples
+          .map(row => ({
+            sku: row['SKU'] || '',
+            name: row['Nama'] || '',
+            category: row['Kategori'] || 'Obat Bebas',
+            min_stock: parseInt(row['Stok Minimum']) || 0,
+            base_price: parseFloat(row['Harga Beli']) || 0,
+            sell_price: parseFloat(row['Harga Jual']) || 0
+          }));
+
+        if (parsedItems.length === 0) {
+           alert('Tidak ada data valid yang ditemukan untuk diimpor. Pastikan Anda sudah menghapus baris contoh.');
+           return;
+        }
+
+        const res = await bulkCreateItems(parsedItems);
+        alert(`Sukses: ${res.message} (${res.count} item)`);
+        await loadItems(1);
+      } catch (e) {
+        alert('Gagal import data: ' + e.message);
+      } finally {
+        importing.value = false;
+        if (fileInput.value) fileInput.value.value = ''; // Reset input
+      }
+    },
+    error: (error) => {
+      alert('Gagal membaca file CSV: ' + error.message);
+      importing.value = false;
+    }
+  });
+};
 </script>
 
 <style scoped>
-/* ── Add Item Button ── */
+
 .btn-add-item {
   padding: 0.5rem 1.1rem;
   font-weight: 600;
@@ -793,5 +876,12 @@ const handleSubmit = async () => {
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
   padding: 2rem;
   width: 100%;
+}
+.spin-anim {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 </style>

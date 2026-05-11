@@ -149,3 +149,38 @@ func DeleteItem(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "Item berhasil dihapus"})
 }
+
+func BulkCreateItems(c *gin.Context) {
+	var items []models.Item
+	if err := c.ShouldBindJSON(&items); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Format data tidak valid"})
+		return
+	}
+
+	if len(items) == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Data kosong"})
+		return
+	}
+
+	// Validate essential fields
+	for _, item := range items {
+		if item.Sku == "" || item.Name == "" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "SKU dan Nama wajib diisi untuk semua item"})
+			return
+		}
+	}
+
+	// Use transaction for batch insert
+	tx := config.DB.Begin()
+	if err := tx.Create(&items).Error; err != nil {
+		tx.Rollback()
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal menyimpan data massal: " + err.Error()})
+		return
+	}
+	tx.Commit()
+
+	c.JSON(http.StatusCreated, gin.H{
+		"message": "Berhasil menyimpan data",
+		"count":   len(items),
+	})
+}

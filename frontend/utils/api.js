@@ -6,6 +6,12 @@ export const fetchItems = async ({ page = 1, limit = 20 } = {}) => {
   return res.json();
 };
 
+export const fetchAllItems = async () => {
+  const res = await fetch(`${API_URL}/items?page=1&limit=100`);
+  if (!res.ok) throw new Error('Fetch failed');
+  return res.json();
+};
+
 export const createItem = async (data) => {
   const res = await fetch(`${API_URL}/items`, {
     method: 'POST',
@@ -28,6 +34,19 @@ export const updateItem = async (id, data) => {
   if (!res.ok) {
     const errorData = await res.json().catch(() => ({}));
     throw new Error(errorData.error || `Gagal mengupdate item (Status: ${res.status})`);
+  }
+  return res.json();
+};
+
+export const bulkCreateItems = async (items) => {
+  const res = await fetch(`${API_URL}/items/bulk`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(items),
+  });
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw new Error(errorData.error || 'Failed to bulk create items');
   }
   return res.json();
 };
@@ -60,6 +79,31 @@ export const createTransaction = async (data) => {
   if (!res.ok) {
     const errorData = await res.json();
     throw new Error(errorData.error || 'Failed to create transaction');
+  }
+  return res.json();
+};
+
+export const fetchAlerts = async () => {
+  const res = await fetch(`${API_URL}/alerts`);
+  if (!res.ok) throw new Error('Fetch failed');
+  return res.json();
+};
+
+export const fetchUsers = async () => {
+  const res = await fetch(`${API_URL}/users`);
+  if (!res.ok) throw new Error('Fetch failed');
+  return res.json();
+};
+
+export const updateUserRole = async (id, role) => {
+  const res = await fetch(`${API_URL}/users/${id}/role`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ role }),
+  });
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw new Error(errorData.error || 'Failed to update role');
   }
   return res.json();
 };

@@ -14,14 +14,11 @@
     </div>
     
     <div class="header-actions">
-      <button class="icon-btn" aria-label="Unduh">
+      <button class="icon-btn" aria-label="Unduh Laporan" title="Unduh Laporan" @click="router.push('/reports')">
         <Download :size="20" />
       </button>
-      <button class="icon-btn" aria-label="Sinkronisasi">
-        <Rocket :size="20" />
-      </button>
-      <button class="icon-btn" aria-label="Pengaturan">
-        <Settings :size="20" />
+      <button class="icon-btn" aria-label="Peringatan" title="Peringatan Cerdas" @click="router.push('/alerts')">
+        <Bell :size="20" />
       </button>
       
       <div class="user-profile" style="display: flex; align-items: center; gap: 0.75rem;">
@@ -41,7 +38,7 @@
 </template>
 
 <script setup>
-import { Download, Rocket, Settings, LogOut, PanelLeftClose, PanelLeftOpen } from 'lucide-vue-next';
+import { Search, Download, Bell, Rocket, Settings, LogOut, PanelLeftClose, PanelLeftOpen } from 'lucide-vue-next';
 import { useAuthRole } from '@/composables/useAuthRole';
 import { useSidebar } from '@/composables/useSidebar';
 

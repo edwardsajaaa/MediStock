@@ -7,7 +7,7 @@
           <RefreshCw :size="14" :class="{ 'spin-icon': isLoading }" />
           {{ isLoading ? 'Memperbarui...' : 'Perbarui Data' }}
         </button>
-        <button v-if="isAdmin" class="btn btn-primary">Laporan Bulanan</button>
+        <button v-if="isAdmin" class="btn btn-primary" @click="router.push('/reports')">Laporan Bulanan</button>
       </div>
     </div>
     
@@ -20,22 +20,26 @@
           :isPositive="true" 
           comparisonText="Data aktif obat dan alat kesehatan" 
         />
-        <MetricCard 
-          title="Peringatan Stok" 
-          :value="stats ? stats.metrics.low_stock_count : '...'" 
-          change="Butuh Tindakan" 
-          :isPositive="false" 
-          comparisonText="Segera lakukan restok" 
-          type="danger"
-        />
-        <MetricCard 
-          title="Siaga Kedaluwarsa" 
-          :value="stats ? stats.metrics.expiring_count : '...'" 
-          change="3 Bulan Ke Depan" 
-          :isPositive="false" 
-          comparisonText="Barang perlu perhatian khusus" 
-          type="warning"
-        />
+        <div @click="router.push('/alerts')" style="cursor: pointer;">
+          <MetricCard 
+            title="Peringatan Stok" 
+            :value="stats ? stats.metrics.low_stock_count : '...'" 
+            change="Butuh Tindakan" 
+            :isPositive="false" 
+            comparisonText="Segera lakukan restok" 
+            type="danger"
+          />
+        </div>
+        <div @click="router.push('/alerts')" style="cursor: pointer;">
+          <MetricCard 
+            title="Siaga Kedaluwarsa" 
+            :value="stats ? stats.metrics.expiring_count : '...'" 
+            change="3 Bulan Ke Depan" 
+            :isPositive="false" 
+            comparisonText="Barang perlu perhatian khusus" 
+            type="warning"
+          />
+        </div>
         <MetricCard 
           title="Mutasi Hari Ini" 
           :value="stats ? stats.metrics.today_transactions : '...'" 
@@ -47,7 +51,7 @@
 
       <div class="grid grid-cols-2 gap-6 mb-6">
         <!-- Smart Alerts Sections -->
-        <div class="card shadow-md border-0 ring-1 ring-gray-100" style="background: linear-gradient(to bottom right, #fff, #fef2f2);">
+        <div class="card shadow-md border-0 ring-1 ring-gray-100 clickable-card" style="background: linear-gradient(to bottom right, #fff, #fef2f2);" @click="router.push('/alerts')">
           <h2 class="text-base font-semibold mb-3 flex items-center gap-2 text-danger">
             <AlertCircle :size="18" /> Peringatan Stok Rendah
           </h2>
@@ -58,9 +62,12 @@
             </li>
           </ul>
           <p v-else class="text-sm text-gray-500 italic mt-2">Semua stok masih aman.</p>
+          <div class="card-link-hint">
+            <span>Lihat selengkapnya →</span>
+          </div>
         </div>
 
-        <div class="card shadow-md border-0 ring-1 ring-warning-100" style="background: linear-gradient(to bottom right, #fff, #fffbeb);">
+        <div class="card shadow-md border-0 ring-1 ring-warning-100 clickable-card" style="background: linear-gradient(to bottom right, #fff, #fffbeb);" @click="router.push('/alerts')">
           <h2 class="text-base font-semibold mb-3 flex items-center gap-2" style="color: #d97706;">
             <AlertTriangle :size="18" /> Peringatan Kedaluwarsa
           </h2>
@@ -74,6 +81,9 @@
             </li>
           </ul>
           <p v-else class="text-sm text-gray-500 italic mt-2">Belum ada barang yang mendekati kedaluwarsa.</p>
+          <div class="card-link-hint">
+            <span>Lihat selengkapnya →</span>
+          </div>
         </div>
       </div>
 
@@ -112,6 +122,7 @@ definePageMeta({
 const stats = ref(null);
 const isLoading = ref(false);
 const { isAdmin } = useAuthRole();
+const router = useRouter();
 
 const trendTitle = computed(() => {
   const year = stats.value?.charts?.stock_trend?.year || new Date().getFullYear();
@@ -250,5 +261,35 @@ onMounted(() => {
     grid-template-columns: 1fr;
     gap: 1rem;
   }
+}
+
+.clickable-card {
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.clickable-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(16, 24, 40, 0.08);
+}
+
+.card-link-hint {
+  margin-top: 0.75rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(226, 232, 240, 0.5);
+}
+
+.card-link-hint span {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--primary-color);
+}
+
+.spin-anim {
+  animation: spin 1s linear infinite;
+}
+
+.text-danger {
+  color: #ef4444;
 }
 </style>
